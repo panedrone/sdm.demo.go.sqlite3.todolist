@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gDao-class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:noNamespaceSchemaLocation="gDao.xsd">
+<dao-class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="dao.xsd">
 
     <crud table="tasks" dto="Task">
         <create method="createTask"/>
@@ -15,4 +15,4 @@
 
     <query method="getCount()" ref="select count(*) from tasks" />
 
-</gDao-class>
+</dao-class>

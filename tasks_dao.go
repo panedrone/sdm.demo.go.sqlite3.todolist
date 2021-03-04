@@ -9,7 +9,6 @@ type TasksDao struct {
 
 // (C)RUD: tasks
 // Generated values are passed to DTO.
-// Returns the number of affected rows or -1 on error.
 
 func (dao *TasksDao) createTask(p *Task) {
     sql := "insert into tasks (g_id, t_priority, t_date, t_subject, t_comments) values (?, ?, ?, ?, ?)"
@@ -45,7 +44,7 @@ func (dao *TasksDao) updateTask(p *Task) int64 {
 
 func (dao *TasksDao) deleteTask(TId int64) int64 {
     sql := "delete from tasks where t_id=?"
-    return dao.ds.execDML(sql, TId);
+    return dao.ds.execDML(sql, TId)
 }
 
 func (dao *TasksDao) getGroupTasks(gId int64) []Task {
@@ -70,7 +69,7 @@ func (dao *TasksDao) getGroupTasks(gId int64) []Task {
 
 func (dao *TasksDao) deleteGroupTasks(gId string) int64 {
     sql := "delete from tasks where g_id=?"
-    return dao.ds.execDML(sql, gId);
+    return dao.ds.execDML(sql, gId)
 }
 
 func (dao *TasksDao) getCount() interface{} {

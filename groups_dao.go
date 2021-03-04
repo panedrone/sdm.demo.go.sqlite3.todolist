@@ -9,7 +9,6 @@ type GroupsDao struct {
 
 // (C)RUD: groups
 // Generated values are passed to DTO.
-// Returns the number of affected rows or -1 on error.
 
 func (dao *GroupsDao) createGroup(p *Group) {
     sql := "insert into groups (g_name) values (?)"
@@ -41,7 +40,7 @@ func (dao *GroupsDao) updateGroup(p *Group) int64 {
 
 func (dao *GroupsDao) deleteGroup(GId int64) int64 {
     sql := "delete from groups where g_id=?"
-    return dao.ds.execDML(sql, GId);
+    return dao.ds.execDML(sql, GId)
 }
 
 func (dao *GroupsDao) getGroups() []Group {

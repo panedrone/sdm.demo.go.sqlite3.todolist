@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified">
 
-	<xs:element name="gDao-class">
+	<xs:element name="dao-class">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:choice minOccurs="0" maxOccurs="unbounded">
