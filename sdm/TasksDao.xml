@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gDao-class xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="gDao.xsd">
+
+    <crud table="tasks" dto="Task">
+        <create method="createTask"/>
+        <read method="readTask"/>
+        <update method="updateTask"/>
+        <delete method="deleteTask"/>
+    </crud>
+
+    <query-dto-list method="getGroupTasks(int64 gId)" ref="get_group_tasks.sql" dto="Task"/>
+
+    <exec-dml method="deleteGroupTasks(gId)" ref="delete_group_tasks.sql"/>
+
+    <query method="getCount()" ref="select count(*) from tasks" />
+
+</gDao-class>

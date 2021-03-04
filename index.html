@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/assets/styles.css" type="text/css"/>
+    <title>Go-TODO</title>
+</head>
+<body>
+
+<table cellpadding=10 class="bg">
+    <tr>
+        <td>
+            <h2>TODO</h2>
+
+            <table border="1" cellspacing=1 cellpadding=5 class="section">
+                <tr>
+                    <th>Group</th>
+                    <th>Tasks Count</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                {{range .Groups}}
+                <tr>
+                    <td>
+                        <a href='/group/tasks?g_id={{.GId}}'>{{.GName}}</a>
+                    </td>
+                    <td align="center">
+                        {{.TasksCount}}
+                    </td>
+                    <td>
+                        <a href="/group/begin_update?g_id={{.GId}}">u</a>
+                    </td>
+                    <td>
+                        <a href="/group/remove?g_id={{.GId}}">x</a>
+                    </td>
+                </tr>
+                {{end}}
+            </table>
+
+            <form method="POST" action="/group/create">
+                <input id="g_name" type="text" name="g_name"/>
+                <input type="submit" value="+"/>
+            </form>
+
+        </td>
+
+        {{if .CurrentGroup}}
+        <td>
+            <h2>{{.CurrentGroup.GName}}</h2>
+
+            <table border cellspacing=1 cellpadding=5 class="section">
+                <tr>
+                    <th>Date</th>
+                    <th>Subject</th>
+                    <th>Priority</th>
+                    <th></th>
+                </tr>
+                {{range .GroupTasks}}
+                <tr>
+                    <td>
+                        {{.TDate}}
+                    </td>
+                    <td>
+                        <a href="/task/edit?t_id={{.TId}}">{{.TSubject}}</a>
+                    </td>
+                    <td align="center">
+                        {{.TPriority}}
+                    </td>
+                    <td>
+                        <a href="/task/delete?t_id={{.TId}}">x</a>
+                    </td>
+                </tr>
+                {{end}}
+            </table>
+
+            <form method="POST" action="/task/create?g_id={{.CurrentGroup.GId}}">
+                <input type="text" name="t_subject"/>
+                <input type="submit" value="+"/>
+            </form>
+
+        </td>
+        {{end}}
+
+        {{if .CurrentTask}}
+        <td>
+            <h2>{{.CurrentTask.TSubject}}</h2>
+
+            <form method="POST" action="/task/update?t_id={{.CurrentTask.TId}}">
+                <table>
+                    <tr>
+                        <td class="form-label">Date</td>
+                        <td><input type="text" name="t_date" id="t_date" value="{{.CurrentTask.TDate}}"/></td>
+                    </tr>
+                    <tr>
+                        <td class="form-label">Subject</td>
+                        <td><input type="text" name="t_subject" id="t_subject" value="{{.CurrentTask.TSubject}}"/></td>
+                    </tr>
+                    <tr>
+                        <td class="form-label">Priority</td>
+                        <td><input type="text" name="t_priority" id="t_priority" value="{{.CurrentTask.TPriority}}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td class="form-label">Comments</td>
+                        <td><textarea name="t_comments" id="t_comments" cols="40"
+                                      rows="5">{{.CurrentTask.TComments}}</textarea></td>
+                    </tr>
+                </table>
+
+                <div align="right">
+                    <p style="text-align: center;">
+                        <input type="submit" value="Update"/>
+                        <a href="/tasks?g_id={{.CurrentGroup.GId}}">Close</a>
+                    </p>
+                </div>
+
+            </form>
+        </td>
+        {{end}}
+
+    </tr>
+</table>
+
+</body>

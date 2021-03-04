@@ -1,0 +1,41 @@
+body {
+    font-family: 'trebuchet MS', 'Lucida sans', Arial;
+    font-size: 13px;
+    color: #333;
+}
+
+.bg {
+    color: #555;
+    background-color: #f0f0f0;
+    font-size: 12px;
+}
+
+.bg td {
+    vertical-align: top;
+}
+
+.form-label {
+    padding: 3pt;
+}
+
+.section {
+    font-family: arial, sans-serif;
+    font-size: 12px;
+    border: solid 1px #666;
+    border-collapse: collapse;
+}
+
+.section th {
+    border: solid 1px #a8a8a8;
+    padding: 8px;
+    /*background-color: #028Bc5;*/
+    /*color:#fff;*/
+    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7);
+    background: #c4c4c4 -moz-linear-gradient(top, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+}
+
+.section td {
+    padding: 8px;
+    border: solid 1px #a8a8a8;
+    background-color: #ffffff;
+}
