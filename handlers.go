@@ -41,7 +41,7 @@ func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func groupRemovedHandler(w http.ResponseWriter, r *http.Request) {
+func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	gId := r.Form.Get("g_id")
 	gid, err := strconv.ParseInt(gId, 10, 64)
@@ -161,4 +161,22 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	t.TComments = comments
 	tDao.updateTask(&t)
 	http.Redirect(w, r, fmt.Sprintf("/task/edit?t_id=%d", t.TId), http.StatusFound)
+}
+
+func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	tid := r.Form.Get("t_id")
+	tId, err := strconv.ParseInt(tid, 10, 64)
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+	ds := DataStore{}
+	ds.open()
+	defer ds.close()
+	tDao := TasksDao{ds: &ds}
+	t := tDao.readTask(tId)
+	gId := t.GId
+	tDao.deleteTask(tId);
+	http.Redirect(w, r, fmt.Sprintf("/group/tasks?g_id=%d", gId), http.StatusFound)
 }

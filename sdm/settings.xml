@@ -7,8 +7,8 @@
 
     <folders target="" sql="sdm/sql"/>
 
-    <!-- scope: (only Java and PHP) package name of DTO classes for Java or 
-    namespace name of DTO classes for PHP; -->
+    <!-- scope (only Java, Go, PHP): the name of package (Java, Go) or name-space
+        (PHP) for DTO; -->
     <!-- inheritance: (only Java) fully-qualified name of base class; example 
     for GWT: 1) inheritance="implements com.google.gwt.user.client.rpc.IsSerializable" 
     2) target class: public class Word implements com.google.gwt.user.client.rpc.IsSerializable... -->
@@ -17,8 +17,8 @@
 
     <dto scope="main" inheritance="" field-names-mode="0" single-file=""/>
 
-    <!-- scope: (only Java and PHP) package name of DAO classes for Java or 
-    namespace name of DAO classes for PHP; -->
+    <!-- scope (only Java, Go, PHP): the name of package (Java, Go) or name-space
+         (PHP) for DAO; -->
 
     <dao scope="main"/>
 
@@ -46,7 +46,7 @@
 
     <!-- if detected JDBC type is missing in 'type-map', then 'default' is used. -->
 
-    <!-- if 'default' is empty, detected type is renderes as-is. -->
+    <!-- if 'default' is empty, detected type is rendered as-is. -->
 
     <!-- this is why type-map for Java+JDBC is empty: -->
 
