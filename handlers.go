@@ -41,6 +41,25 @@ func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
+func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	gid := r.Form.Get("g_id")
+	gId, err := strconv.ParseInt(gid, 10, 64)
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+	name := r.Form.Get("g_name")
+	ds := DataStore{}
+	ds.open()
+	defer ds.close()
+	dao := GroupsDao{ds: &ds}
+	gr := dao.readGroup(gId)
+	gr.GName = name
+	dao.updateGroup(&gr)
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
 func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	gId := r.Form.Get("g_id")

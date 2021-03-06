@@ -13,6 +13,7 @@ func main() {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
 	mux.HandleFunc("/", indexHandler)
 	mux.HandleFunc("/group/create", groupCreateHandler)
+	mux.HandleFunc("/group/update", groupUpdateHandler)
 	mux.HandleFunc("/group/delete", groupDeleteHandler)
 	mux.HandleFunc("/group/tasks", groupTasksHandler)
 	mux.HandleFunc("/task/edit", taskEditHandler)
