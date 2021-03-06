@@ -8,7 +8,7 @@ import (
 
 	// _ "github.com/mattn/go-sqlite3"		// SQLite3
 	// _ "github.com/go-sql-driver/mysql"	// MySQL
-	_ "github.com/denisenkom/go-mssqldb" // SQL Server
+	// _ "github.com/denisenkom/go-mssqldb" // SQL Server
 	// _ "github.com/godror/godror"			// Oracle
 )
 
