@@ -58,3 +58,23 @@ func (dao *GroupsDao) getGroups() []Group {
     dao.ds.queryAllRows(sql, onDto)
     return res
 }
+
+func (dao *GroupsDao) getGroupsIds() []int64 {
+    sql := "select g.*, " + 
+        "\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" + 
+        "\n from groups g"
+    var res []int64
+    onRow := func(rawData interface{}) {
+        data := rawData.(int64)
+		res = append(res, data)
+	}
+    dao.ds.queryAll(sql, onRow)
+    return res
+}
+
+func (dao *GroupsDao) getGroupsId() int64 {
+    sql := "select g.*, " + 
+        "\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" + 
+        "\n from groups g"
+    return dao.ds.query(sql).(int64)
+}

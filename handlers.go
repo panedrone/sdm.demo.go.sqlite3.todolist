@@ -24,6 +24,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	defer ds.close()
 	dao := GroupsDao{ds: &ds}
 	groups := dao.getGroups()
+	//ids := dao.getGroupsIds() // just test
+	//fmt.Println(ids)
 	vars := PageVariables{Groups: groups}
 	tpl.Execute(w, vars)
 }
