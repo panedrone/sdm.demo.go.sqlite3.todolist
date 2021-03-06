@@ -119,11 +119,18 @@ func (ds *DataStore) query(sql string, args ...interface{}) interface{} {
 
 func (ds *DataStore) queryAll(sql string, args ...interface{}) []interface{} {
 	var arr []interface{}
-	onRowHandler := func(rowData map[string]interface{}) {
-		values := make([]string, len(rowData))
-		arr = append(arr, values[0])
+	sql = ds.formatSQL(sql)
+	rows, err := ds.handle.Query(sql, args...)
+	if err != nil {
+		log.Fatal(err)
+		return nil
 	}
-	ds.queryAllRows(sql, onRowHandler, args...)
+	defer rows.Close()
+	for rows.Next() {
+		var data interface{}
+		rows.Scan(&data)
+		arr = append(arr, data)
+	}
 	return arr
 }
 
