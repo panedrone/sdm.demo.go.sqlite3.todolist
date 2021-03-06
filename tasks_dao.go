@@ -13,7 +13,7 @@ type TasksDao struct {
 func (dao *TasksDao) createTask(p *Task) {
     sql := "insert into tasks (g_id, t_priority, t_date, t_subject, t_comments) values (?, ?, ?, ?, ?)"
     res := dao.ds.insert(sql, p.GId, p.TPriority, p.TDate, p.TSubject, p.TComments)
-    p.TId = res
+    p.TId = res.(int64)
 }
 
 // C(R)UD: tasks

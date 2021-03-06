@@ -13,7 +13,7 @@ type GroupsDao struct {
 func (dao *GroupsDao) createGroup(p *Group) {
     sql := "insert into groups (g_name) values (?)"
     res := dao.ds.insert(sql, p.GName)
-    p.GId = res
+    p.GId = res.(int64)
 }
 
 // C(R)UD: groups
