@@ -22,8 +22,8 @@ func (dao *GroupsDao) readGroup(GId int64) Group {
     sql := "select * from groups where g_id=?"
     rd := dao.ds.queryRow(sql, GId)
     obj := Group{}
-    obj.GId = rd["g_id"].(int64)
-    obj.GName = rd["g_name"].(string)
+    dao.ds.assign(&obj.GId, rd["g_id"]) // (int64)
+    dao.ds.assign(&obj.GName, rd["g_name"]) // (string)
     return obj
 }
 
@@ -50,9 +50,9 @@ func (dao *GroupsDao) getGroups() []Group {
     var res []Group
     onDto := func(rd map[string]interface{}) {
         obj := Group{}
-        obj.GId = rd["g_id"].(int64)
-        obj.GName = rd["g_name"].(string)
-        obj.TasksCount = rd["tasks_count"].(int64)
+        dao.ds.assign(&obj.GId, rd["g_id"]) // (int64)
+        dao.ds.assign(&obj.GName, rd["g_name"]) // (string)
+        dao.ds.assign(&obj.TasksCount, rd["tasks_count"]) // (int64)
         res = append(res, obj)
     }
     dao.ds.queryAllRows(sql, onDto)

@@ -22,12 +22,12 @@ func (dao *TasksDao) readTask(TId int64) Task {
     sql := "select * from tasks where t_id=?"
     rd := dao.ds.queryRow(sql, TId)
     obj := Task{}
-    obj.TId = rd["t_id"].(int64)
-    obj.GId = rd["g_id"].(int64)
-    obj.TPriority = rd["t_priority"].(int64)
-    obj.TDate = rd["t_date"].(string)
-    obj.TSubject = rd["t_subject"].(string)
-    obj.TComments = rd["t_comments"].(string)
+    dao.ds.assign(&obj.TId, rd["t_id"]) // (int64)
+    dao.ds.assign(&obj.GId, rd["g_id"]) // (int64)
+    dao.ds.assign(&obj.TPriority, rd["t_priority"]) // (int64)
+    dao.ds.assign(&obj.TDate, rd["t_date"]) // (string)
+    dao.ds.assign(&obj.TSubject, rd["t_subject"]) // (string)
+    dao.ds.assign(&obj.TComments, rd["t_comments"]) // (string)
     return obj
 }
 
@@ -53,12 +53,12 @@ func (dao *TasksDao) getGroupTasks(gId int64) []Task {
     var res []Task
     onDto := func(rd map[string]interface{}) {
         obj := Task{}
-        obj.TId = rd["t_id"].(int64)
-        obj.GId = rd["g_id"].(int64)
-        obj.TPriority = rd["t_priority"].(int64)
-        obj.TDate = rd["t_date"].(string)
-        obj.TSubject = rd["t_subject"].(string)
-        obj.TComments = rd["t_comments"].(string)
+        dao.ds.assign(&obj.TId, rd["t_id"]) // (int64)
+        dao.ds.assign(&obj.GId, rd["g_id"]) // (int64)
+        dao.ds.assign(&obj.TPriority, rd["t_priority"]) // (int64)
+        dao.ds.assign(&obj.TDate, rd["t_date"]) // (string)
+        dao.ds.assign(&obj.TSubject, rd["t_subject"]) // (string)
+        dao.ds.assign(&obj.TComments, rd["t_comments"]) // (string)
         res = append(res, obj)
     }
     dao.ds.queryAllRows(sql, onDto, gId)
