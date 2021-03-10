@@ -4,77 +4,77 @@ package main
 // http://sqldalmaker.sourceforge.net
 
 type GroupsDao struct {
-    ds *DataStore
+	ds *DataStore
 }
 
 // (C)RUD: groups
 // Generated values are passed to DTO.
 
 func (dao *GroupsDao) createGroup(p *Group) {
-    sql := "insert into groups (g_name) values (?)"
-    res := dao.ds.insert(sql, p.GName)
-    p.GId = res.(int64)
+	sql := "insert into groups (g_name) values (?)"
+	res := dao.ds.insert(sql, p.GName)
+	p.GId = res.(int64)
 }
 
 // C(R)UD: groups
 
 func (dao *GroupsDao) readGroup(GId int64) Group {
-    sql := "select * from groups where g_id=?"
-    rd := dao.ds.queryRow(sql, GId)
-    obj := Group{}
-    dao.ds.assign(&obj.GId, rd["g_id"]) // (int64)
-    dao.ds.assign(&obj.GName, rd["g_name"]) // (string)
-    return obj
+	sql := "select * from groups where g_id=?"
+	rd := dao.ds.queryRow(sql, GId)
+	obj := Group{}
+	dao.ds.assign(&obj.GId, rd["g_id"])
+	dao.ds.assign(&obj.GName, rd["g_name"])
+	return obj
 }
 
 // CR(U)D: groups
 // Returns the number of affected rows or -1 on error.
 
 func (dao *GroupsDao) updateGroup(p *Group) int64 {
-    sql := "update groups set g_name=? where g_id=?"
-    return dao.ds.execDML(sql, p.GName, p.GId)
+	sql := "update groups set g_name=? where g_id=?"
+	return dao.ds.execDML(sql, p.GName, p.GId)
 }
 
 // CRU(D): groups
 // Returns the number of affected rows or -1 on error.
 
 func (dao *GroupsDao) deleteGroup(GId int64) int64 {
-    sql := "delete from groups where g_id=?"
-    return dao.ds.execDML(sql, GId)
+	sql := "delete from groups where g_id=?"
+	return dao.ds.execDML(sql, GId)
 }
 
 func (dao *GroupsDao) getGroups() []Group {
-    sql := "select g.*, " + 
-        "\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" + 
-        "\n from groups g"
-    var res []Group
-    onDto := func(rd map[string]interface{}) {
-        obj := Group{}
-        dao.ds.assign(&obj.GId, rd["g_id"]) // (int64)
-        dao.ds.assign(&obj.GName, rd["g_name"]) // (string)
-        dao.ds.assign(&obj.TasksCount, rd["tasks_count"]) // (int64)
-        res = append(res, obj)
-    }
-    dao.ds.queryAllRows(sql, onDto)
-    return res
+	sql := "select g.*, " +
+		"\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" +
+		"\n from groups g"
+	var res []Group
+	onDto := func(rd map[string]interface{}) {
+		obj := Group{}
+		dao.ds.assign(&obj.GId, rd["g_id"])
+		dao.ds.assign(&obj.GName, rd["g_name"])
+		dao.ds.assign(&obj.TasksCount, rd["tasks_count"])
+		res = append(res, obj)
+	}
+	dao.ds.queryAllRows(sql, onDto)
+	return res
 }
 
 func (dao *GroupsDao) getGroupsIds() []int64 {
-    sql := "select g.*, " + 
-        "\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" + 
-        "\n from groups g"
-    var res []int64
-    onRow := func(rawData interface{}) {
-        data := rawData.(int64)
+	sql := "select g.*, " +
+		"\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" +
+		"\n from groups g"
+	var res []int64
+	onRow := func(rawData interface{}) {
+		data := rawData.(int64)
 		res = append(res, data)
 	}
-    dao.ds.queryAll(sql, onRow)
-    return res
+	dao.ds.queryAll(sql, onRow)
+	return res
 }
 
 func (dao *GroupsDao) getGroupsId() int64 {
-    sql := "select g.*, " + 
-        "\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" + 
-        "\n from groups g"
-    return dao.ds.query(sql).(int64)
+	sql := "select g.*, " +
+		"\n (select count(*) from tasks where g_id=g.g_id) as tasks_count" +
+		"\n from groups g"
+	return dao.ds.query(sql).(int64)
 }

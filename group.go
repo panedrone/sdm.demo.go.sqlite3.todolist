@@ -4,7 +4,7 @@ package main
 // http://sqldalmaker.sourceforge.net
 
 type Group struct {
-    GId int64
-    GName string
-    TasksCount int64
+	GId        int64
+	GName      string
+	TasksCount int64
 }

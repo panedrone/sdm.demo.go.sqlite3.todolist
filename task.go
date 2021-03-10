@@ -4,10 +4,10 @@ package main
 // http://sqldalmaker.sourceforge.net
 
 type Task struct {
-    TId int64
-    GId int64
-    TPriority int64
-    TDate string
-    TSubject string
-    TComments string
+	TId       int64
+	GId       int64
+	TPriority int64
+	TDate     string
+	TSubject  string
+	TComments string
 }
