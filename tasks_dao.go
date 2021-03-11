@@ -18,9 +18,9 @@ func (dao *TasksDao) createTask(p *Task) {
 
 // C(R)UD: tasks
 
-func (dao *TasksDao) readTask(TId int64) Task {
+func (dao *TasksDao) readTask(tId int64) Task {
 	sql := "select * from tasks where t_id=?"
-	rd := dao.ds.queryRow(sql, TId)
+	rd := dao.ds.queryRow(sql, tId)
 	obj := Task{}
 	dao.ds.assign(&obj.TId, rd["t_id"])
 	dao.ds.assign(&obj.GId, rd["g_id"])
@@ -42,15 +42,15 @@ func (dao *TasksDao) updateTask(p *Task) int64 {
 // CRU(D): tasks
 // Returns the number of affected rows or -1 on error.
 
-func (dao *TasksDao) deleteTask(TId int64) int64 {
+func (dao *TasksDao) deleteTask(tId int64) int64 {
 	sql := "delete from tasks where t_id=?"
-	return dao.ds.execDML(sql, TId)
+	return dao.ds.execDML(sql, tId)
 }
 
-func (dao *TasksDao) getGroupTasks(gId int64) []Task {
+func (dao *TasksDao) getGroupTasks(gId int64) []*Task {
 	sql := "select * from tasks where g_id =?" +
 		"\n order by t_id"
-	var res []Task
+	var res []*Task
 	onDto := func(rd map[string]interface{}) {
 		obj := Task{}
 		dao.ds.assign(&obj.TId, rd["t_id"])
@@ -59,7 +59,7 @@ func (dao *TasksDao) getGroupTasks(gId int64) []Task {
 		dao.ds.assign(&obj.TDate, rd["t_date"])
 		dao.ds.assign(&obj.TSubject, rd["t_subject"])
 		dao.ds.assign(&obj.TComments, rd["t_comments"])
-		res = append(res, obj)
+		res = append(res, &obj)
 	}
 	dao.ds.queryAllRows(sql, onDto, gId)
 	return res
