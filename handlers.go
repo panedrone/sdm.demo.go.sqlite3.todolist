@@ -12,9 +12,9 @@ import (
 var tpl = template.Must(template.ParseFiles("index.html"))
 
 type PageVariables struct {
-	Groups       []Group
+	Groups       []*Group
 	CurrentGroup *Group
-	GroupTasks   []Task
+	GroupTasks   []*Task
 	CurrentTask  *Task
 }
 
@@ -59,7 +59,7 @@ func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	gr := dao.readGroup(gId)
 	gr.GName = name
 	dao.updateGroup(&gr)
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, fmt.Sprintf("/group/tasks?g_id=%d", gId), http.StatusFound)
 }
 
 func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -164,13 +164,13 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	subject := r.Form.Get("t_subject")
-	priority  := r.Form.Get("t_priority")
+	priority := r.Form.Get("t_priority")
 	tPriority, err := strconv.ParseInt(priority, 10, 64)
 	if err != nil {
 		log.Panic(err)
 		return
 	}
-	comments  := r.Form.Get("t_comments")
+	comments := r.Form.Get("t_comments")
 	ds := DataStore{}
 	ds.open()
 	defer ds.close()
@@ -198,6 +198,6 @@ func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	tDao := TasksDao{ds: &ds}
 	t := tDao.readTask(tId)
 	gId := t.GId
-	tDao.deleteTask(tId);
+	tDao.deleteTask(tId)
 	http.Redirect(w, r, fmt.Sprintf("/group/tasks?g_id=%d", gId), http.StatusFound)
 }

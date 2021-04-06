@@ -23,6 +23,7 @@ body {
     font-size: 12px;
     border: solid 1px #666;
     border-collapse: collapse;
+    min-width: 300px;
 }
 
 .section th {

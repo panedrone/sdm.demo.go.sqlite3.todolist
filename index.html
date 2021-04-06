@@ -3,34 +3,16 @@
 <head>
     <link rel="stylesheet" href="/assets/styles.css" type="text/css"/>
     <title>Go-TODO</title>
-    <script type="text/javascript">
-
-        function update_group(g_id) {
-            if (window.XMLHttpRequest) {
-                xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("POST", "/group/update?g_id=" + g_id, false); // false ==> sync
-                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
-                xmlhttp.send("g_name=" + document.getElementById("g_name").value);
-                // document.writeln(xmlhttp.responseText);
-                location.reload();
-            }
-        }
-
-    </script>
 </head>
 <body>
 
 <table cellpadding=10 class="bg">
     <tr>
         <td>
-            <h2>TODO</h2>
-
-            <table border="1" cellspacing=1 cellpadding=5 class="section">
+            <table class="section">
                 <tr>
                     <th>Group</th>
                     <th>Tasks Count</th>
-                    <th></th>
-                    <th></th>
                 </tr>
                 {{range .Groups}}
                 <tr>
@@ -39,12 +21,6 @@
                     </td>
                     <td align="center">
                         {{.TasksCount}}
-                    </td>
-                    <td>
-                        <a href="javascript:update_group({{.GId}});">u</a>
-                    </td>
-                    <td>
-                        <a href="/group/delete?g_id={{.GId}}">x</a>
                     </td>
                 </tr>
                 {{end}}
@@ -59,14 +35,17 @@
 
         {{if .CurrentGroup}}
         <td>
-            <h2>{{.CurrentGroup.GName}}</h2>
+            <form method="POST" action="/group/update?g_id={{.CurrentGroup.GId}}">
+                <input style="font-size: 14pt" type="text" name="g_name" value="{{.CurrentGroup.GName}}"/>
+                <input type="submit" value="!"/>
+                <a href="/group/delete?g_id={{.CurrentGroup.GId}}"><input type="button" value="x"/></a>
+            </form>
 
-            <table border cellspacing=1 cellpadding=5 class="section">
+            <table class="section">
                 <tr>
                     <th>Date</th>
                     <th>Subject</th>
                     <th>Priority</th>
-                    <th></th>
                 </tr>
                 {{range .GroupTasks}}
                 <tr>
@@ -78,9 +57,6 @@
                     </td>
                     <td align="center">
                         {{.TPriority}}
-                    </td>
-                    <td>
-                        <a href="/task/delete?t_id={{.TId}}">x</a>
                     </td>
                 </tr>
                 {{end}}
@@ -96,7 +72,7 @@
 
         {{if .CurrentTask}}
         <td>
-            <h2>{{.CurrentTask.TSubject}}</h2>
+            <span style="font-size: 14pt">{{.CurrentTask.TSubject}}</span>
 
             <form method="POST" action="/task/update?t_id={{.CurrentTask.TId}}">
                 <table>
@@ -123,8 +99,13 @@
 
                 <div align="right">
                     <p style="text-align: center;">
-                        <input type="submit" value="Update"/>
-                        <a href="/group/tasks?g_id={{.CurrentGroup.GId}}"><button type="button">Close</button></a>
+                        <input type="submit" value="!"/>
+                        <a href="/task/delete?t_id={{.CurrentTask.TId}}">
+                            <input type="button" value="x"/>
+                        </a>
+                        <a href="/group/tasks?g_id={{.CurrentGroup.GId}}">
+                            <input type="button" value="&lt;"/>
+                        </a>
                     </p>
                 </div>
 
