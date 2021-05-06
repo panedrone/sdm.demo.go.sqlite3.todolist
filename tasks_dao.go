@@ -10,69 +10,72 @@ type TasksDao struct {
 // (C)RUD: tasks
 // Generated values are passed to DTO.
 
-func (dao *TasksDao) createTask(p *Task) {
-	sql := "insert into tasks (g_id, t_priority, t_date, t_subject, t_comments) values (?, ?, ?, ?, ?)"
-	res := dao.ds.insert(sql, p.GId, p.TPriority, p.TDate, p.TSubject, p.TComments)
-	p.TId = res.(int64)
+func (dao *TasksDao) CreateTask(p *Task) {
+	sql := `insert into tasks (g_id, t_priority, t_date, t_subject, t_comments) values (?, ?, ?, ?, ?)`
+	res := dao.ds.Insert(sql, "t_id", p.GId, p.TPriority, p.TDate, p.TSubject, p.TComments)
+	dao.ds.Assign(&p.TId, res)
 }
 
 // C(R)UD: tasks
 
-func (dao *TasksDao) readTask(tId int64) Task {
-	sql := "select * from tasks where t_id=?"
-	rd := dao.ds.queryRow(sql, tId)
+func (dao *TasksDao) ReadTask(tId int64) Task {
+	sql := `select * from tasks where t_id=?`
+	rd := dao.ds.QueryRow(sql, tId)
 	obj := Task{}
-	dao.ds.assign(&obj.TId, rd["t_id"])
-	dao.ds.assign(&obj.GId, rd["g_id"])
-	dao.ds.assign(&obj.TPriority, rd["t_priority"])
-	dao.ds.assign(&obj.TDate, rd["t_date"])
-	dao.ds.assign(&obj.TSubject, rd["t_subject"])
-	dao.ds.assign(&obj.TComments, rd["t_comments"])
+	dao.ds.Assign(&obj.TId, rd["t_id"] /* t(t_id) <- t(t_id) */)
+	dao.ds.Assign(&obj.GId, rd["g_id"] /* t(g_id) <- t(g_id) */)
+	dao.ds.Assign(&obj.TPriority, rd["t_priority"] /* t(t_priority) <- t(t_priority) */)
+	dao.ds.Assign(&obj.TDate, rd["t_date"] /* t(t_date) <- t(t_date) */)
+	dao.ds.Assign(&obj.TSubject, rd["t_subject"] /* t(t_subject) <- t(t_subject) */)
+	dao.ds.Assign(&obj.TComments, rd["t_comments"] /* t(t_comments) <- t(t_comments) */)
 	return obj
 }
 
 // CR(U)D: tasks
 // Returns the number of affected rows or -1 on error.
 
-func (dao *TasksDao) updateTask(p *Task) int64 {
-	sql := "update tasks set g_id=?, t_priority=?, t_date=?, t_subject=?, t_comments=? where t_id=?"
-	return dao.ds.execDML(sql, p.GId, p.TPriority, p.TDate, p.TSubject, p.TComments, p.TId)
+func (dao *TasksDao) UpdateTask(p *Task) int64 {
+	sql := `update tasks set g_id=?, t_priority=?, t_date=?, t_subject=?, t_comments=? where t_id=?`
+	return dao.ds.Exec(sql, p.GId, p.TPriority, p.TDate, p.TSubject, p.TComments, p.TId)
 }
 
 // CRU(D): tasks
 // Returns the number of affected rows or -1 on error.
 
-func (dao *TasksDao) deleteTask(tId int64) int64 {
-	sql := "delete from tasks where t_id=?"
-	return dao.ds.execDML(sql, tId)
+func (dao *TasksDao) DeleteTask(tId int64) int64 {
+	sql := `delete from tasks where t_id=?`
+	return dao.ds.Exec(sql, tId)
 }
 
-func (dao *TasksDao) getGroupTasks(gId int64) []*Task {
-	sql := "select * from tasks where g_id =?" +
-		"\n order by t_id"
+func (dao *TasksDao) GetGroupTasks(gId int64) []*Task {
+	sql := `select * from tasks where g_id =? 
+		order by t_id`
 	var res []*Task
 	onDto := func(rd map[string]interface{}) {
 		obj := Task{}
-		dao.ds.assign(&obj.TId, rd["t_id"])
-		dao.ds.assign(&obj.GId, rd["g_id"])
-		dao.ds.assign(&obj.TPriority, rd["t_priority"])
-		dao.ds.assign(&obj.TDate, rd["t_date"])
-		dao.ds.assign(&obj.TSubject, rd["t_subject"])
-		dao.ds.assign(&obj.TComments, rd["t_comments"])
+		dao.ds.Assign(&obj.TId, rd["t_id"] /* t(t_id) <- q(t_id) */)
+		dao.ds.Assign(&obj.GId, rd["g_id"] /* t(g_id) <- q(g_id) */)
+		dao.ds.Assign(&obj.TPriority, rd["t_priority"] /* t(t_priority) <- q(t_priority) */)
+		dao.ds.Assign(&obj.TDate, rd["t_date"] /* t(t_date) <- q(t_date) */)
+		dao.ds.Assign(&obj.TSubject, rd["t_subject"] /* t(t_subject) <- q(t_subject) */)
+		dao.ds.Assign(&obj.TComments, rd["t_comments"] /* t(t_comments) <- q(t_comments) */)
 		res = append(res, &obj)
 	}
-	dao.ds.queryAllRows(sql, onDto, gId)
+	dao.ds.QueryAllRows(sql, onDto, gId)
 	return res
 }
 
 // Returns the number of affected rows or -1 on error.
 
-func (dao *TasksDao) deleteGroupTasks(gId string) int64 {
-	sql := "delete from tasks where g_id=?"
-	return dao.ds.execDML(sql, gId)
+func (dao *TasksDao) DeleteGroupTasks(gId string) int64 {
+	sql := `delete from tasks where g_id=?`
+	return dao.ds.Exec(sql, gId)
 }
 
-func (dao *TasksDao) getCount() interface{} {
-	sql := "select count(*) from tasks"
-	return dao.ds.query(sql).(interface{})
+func (dao *TasksDao) GetCount() interface{} {
+	sql := `select count(*) from tasks`
+	r := dao.ds.Query(sql)
+	var res interface{}
+	dao.ds.Assign(&res, r)
+	return res
 }
