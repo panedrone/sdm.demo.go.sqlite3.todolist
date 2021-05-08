@@ -1,4 +1,4 @@
-module sdm.demo.golang.sqlite3.todolist
+module sdm_demo_go_todolist
 
 go 1.16
 
