@@ -161,6 +161,7 @@
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
+                        renderGroups() // update tasks count
                         renderGroupDetails(g_id)
                     } else {
                         alert(status)
@@ -233,21 +234,21 @@
 <input type="hidden" id="curr_g_id">
 <input type="hidden" id="curr_t_id">
 
-<table class="bg" cellpadding="8">
-    <tr>
-        <td colspan="3">
-            <table class="controls">
-                <tr>
-                    <td>
-                        <img src="go.png" alt="" style="width: auto; height: 36px;"/>
-                    </td>
-                    <td width="100%">
-                        <h2>Go REST Demo</h2>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+<table class="bg" cellpadding="4">
+    <!--    <tr>-->
+    <!--        <td colspan="3">-->
+    <!--            <table class="controls">-->
+    <!--                <tr>-->
+    <!--                    <td>-->
+    <!--                        <img src="go.png" alt="" style="width: auto; height: 36px;"/>-->
+    <!--                    </td>-->
+    <!--                    <td width="100%">-->
+    <!--                        <h2>Go REST Demo</h2>-->
+    <!--                    </td>-->
+    <!--                </tr>-->
+    <!--            </table>-->
+    <!--        </td>-->
+    <!--    </tr>-->
     <tr>
         <td>
             <table>
@@ -264,14 +265,12 @@
                 <tr>
                     <td>
                         <form method="post" enctype="multipart/form-data" name="form_create_group">
-                            <table>
+                            <table class="controls">
                                 <tr>
-                                    <td width="100%">
-                                        <label>
-                                            <input type="text" name="g_name"/>
-                                        </label>
-                                    </td>
                                     <td>
+                                        <input type="text" name="g_name"/>
+                                    </td>
+                                    <td width="1">
                                         <a href="javascript:createGroup();"><input type="button" value="+"/></a>
                                     </td>
                                 </tr>
@@ -296,9 +295,14 @@
                                                    value=""/>
                                         </label>
                                     </td>
-                                    <td><a href="javascript:updateGroup();"><input type="button" value="!"/></a></td>
-                                    <td><a href="javascript:deleteGroup();"><input type="button" value="x"/></a></td>
-                                    <td><a href="javascript:hideGroupDetails2();"><input type="button" value="x"/></a>
+                                    <td width="1">
+                                        <a href="javascript:updateGroup();"><input type="button" value="!"/></a>
+                                    </td>
+                                    <td width="1">
+                                        <a href="javascript:deleteGroup();"><input type="button" value="x"/></a>
+                                    </td>
+                                    <td width="1">
+                                        <a href="javascript:hideGroupDetails2();"><input type="button" value="&lt;"/></a>
                                     </td>
                                 </tr>
                             </table>
@@ -322,21 +326,19 @@
                         <form method="post" id="form_create_task">
                             <table class="controls">
                                 <tr>
-                                    <td width="100%">
-                                        <label>
-                                            <input type="text" name="t_subject"/>
-                                        </label>
+                                    <td>
+                                        <input type="text" name="t_subject"/>
                                     </td>
-                                    <td><a href="javascript:taskCreate();"><input type="button" value="+"/></a></td>
+                                    <td width="1">
+                                        <a href="javascript:taskCreate();"><input type="button" value="+"/></a>
+                                    </td>
                                 </tr>
                             </table>
                         </form>
                     </td>
                 </tr>
             </table>
-
         </td>
-
         <td>
             <form id="form_task_details" style="visibility: hidden">
                 <table>
