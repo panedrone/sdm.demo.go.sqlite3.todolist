@@ -9,127 +9,6 @@
             'Content-Type': 'application/json'
         }
 
-        function createGroup() {
-            let json = formToJson("form_create_group");
-            fetch("/group/create", {method: 'post', headers: JSON_HEADERS, body: json})
-                .then(response => response.status)
-                .then(status => {
-                    if (status === 200) {
-                        renderGroups()
-                    } else {
-                        alert(status)
-                    }
-                });
-        }
-
-        function updateTask() {
-            let g_id = document.getElementById("curr_g_id").value
-            let t_id = document.getElementById("curr_t_id").value
-            let json = formToJson("form_task_details", function (object) {
-                // alert(object)
-                if (!isNaN(object["t_priority"])) {
-                    object["t_priority"] = parseInt(object["t_priority"])
-                }
-            });
-            fetch("/task/update/" + t_id, {method: 'put', headers: JSON_HEADERS, body: json})
-                .then(response => response.status)
-                .then(status => {
-                    if (status === 200) {
-                        renderGroupTasks(g_id)
-                        renderTask(t_id)
-                    } else {
-                        alert(status)
-                    }
-                });
-        }
-
-        function hideTaskDetails() {
-            let form = document.getElementById("form_task_details")
-            form.style.visibility = "hidden"
-        }
-
-        function showTaskDetails() {
-            let form = document.getElementById("form_task_details")
-            form.style.visibility = "visible"
-        }
-
-        function hideGroupDetails() {
-            let group_details = document.getElementById("group_details")
-            group_details.style.visibility = "hidden"
-        }
-
-        function hideGroupDetails2() {
-            let group_details = document.getElementById("group_details")
-            group_details.style.visibility = "hidden"
-            hideTaskDetails()
-        }
-
-        function showGroupDetails() {
-            let group_details = document.getElementById("group_details")
-            group_details.style.visibility = "visible"
-        }
-
-        function deleteGroup() {
-            let g_id = document.getElementById("curr_g_id").value
-            fetch("/group/delete/" + g_id)
-                .then(response => response.status)
-                .then(status => {
-                    if (status === 200) {
-                        hideTaskDetails()
-                        hideGroupDetails()
-                        renderGroups()
-                    } else {
-                        alert(status)
-                    }
-                })
-        }
-
-        function formToJson(formId, preprocess_cb = null) {
-            // https://stackoverflow.com/questions/29775797/fetch-post-json-data
-            let form = document.forms.namedItem(formId);
-            let formData = new FormData(form);
-            let object = {};
-            formData.forEach((value, key) => object[key] = value);
-            if (preprocess_cb) {
-                preprocess_cb(object)
-            }
-            let json = JSON.stringify(object);
-            return json
-        }
-
-        function updateGroup() {
-            let g_id = document.getElementById("curr_g_id").value
-            let json = formToJson("form_update_group");
-            fetch("/group/update/" + g_id, {method: 'post', headers: JSON_HEADERS, body: json})
-                .then(response => response.status)
-                .then(status => {
-                    if (status === 200) {
-                        renderGroups()
-                    } else {
-                        alert(status)
-                    }
-                })
-        }
-
-        function renderTask(t_id) {
-            document.getElementById("curr_t_id").value = t_id
-            fetch("/task/read/" + t_id)
-                .then(response => response.json())
-                .then(task => {
-                    let subj = document.getElementById("subj")
-                    subj.innerText = task.t_subject
-                    let t_date = document.getElementById("t_date")
-                    t_date.value = task.t_date
-                    let t_subject = document.getElementById("t_subject")
-                    t_subject.value = task.t_subject
-                    let t_priority = document.getElementById("t_priority")
-                    t_priority.value = task.t_priority
-                    let t_comments = document.getElementById("t_comments")
-                    t_comments.value = task.t_comments
-                    showTaskDetails()
-                })
-        }
-
         function renderGroups() {
             let groupsTable = document.getElementById("groups_table")
             while (groupsTable.rows.length > 1) {
@@ -154,33 +33,78 @@
                 })
         }
 
-        function taskCreate() {
-            let g_id = document.getElementById("curr_g_id").value
-            let json = formToJson("form_create_task");
-            fetch("/task/create/" + g_id, {method: 'post', headers: JSON_HEADERS, body: json})
+        function renderGroupDetails(g_id) {
+            fetch("/group/" + g_id)
+                .then(response => response.json())
+                .then(group => {
+                    let g_name = document.getElementById("g_name2")
+                    g_name.value = group.g_name
+                    showGroupDetails()
+                    hideTaskDetails()
+                })
+            document.getElementById("curr_g_id").value = g_id
+            renderGroupTasks(g_id)
+        }
+
+        function createGroup() {
+            let json = formToJson("form_create_group");
+            fetch("/group", {method: 'post', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
-                        renderGroups() // update tasks count
-                        renderGroupDetails(g_id)
+                        renderGroups()
+                    } else {
+                        alert(status)
+                    }
+                });
+        }
+
+        function updateGroup() {
+            let g_id = document.getElementById("curr_g_id").value
+            let json = formToJson("form_update_group");
+            // alert(json)
+            fetch("/group/" + g_id, {method: 'put', headers: JSON_HEADERS, body: json})
+                .then(response => response.status)
+                .then(status => {
+                    if (status === 200) {
+                        renderGroups()
                     } else {
                         alert(status)
                     }
                 })
         }
 
-        function taskDelete() {
+        function deleteGroup() {
             let g_id = document.getElementById("curr_g_id").value
-            let t_id = document.getElementById("curr_t_id").value
-            fetch("/task/delete/" + t_id)
+            fetch("/group/" + g_id, {method: 'delete'})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
                         hideTaskDetails()
-                        renderGroupDetails(g_id)
+                        hideGroupDetails()
+                        renderGroups()
                     } else {
                         alert(status)
                     }
+                })
+        }
+
+        function renderTask(t_id) {
+            document.getElementById("curr_t_id").value = t_id
+            fetch("/task/" + t_id)
+                .then(response => response.json())
+                .then(task => {
+                    let subj = document.getElementById("subj")
+                    subj.innerText = task.t_subject
+                    let t_date = document.getElementById("t_date")
+                    t_date.value = task.t_date
+                    let t_subject = document.getElementById("t_subject")
+                    t_subject.value = task.t_subject
+                    let t_priority = document.getElementById("t_priority")
+                    t_priority.value = task.t_priority
+                    let t_comments = document.getElementById("t_comments")
+                    t_comments.value = task.t_comments
+                    showTaskDetails()
                 })
         }
 
@@ -211,17 +135,93 @@
                 })
         }
 
-        function renderGroupDetails(g_id) {
-            fetch("/group/read/" + g_id)
-                .then(response => response.json())
-                .then(group => {
-                    let g_name = document.getElementById("g_name2")
-                    g_name.value = group.g_name
-                    showGroupDetails()
-                    hideTaskDetails()
+        function taskCreate() {
+            let g_id = document.getElementById("curr_g_id").value
+            let json = formToJson("form_create_task");
+            fetch("/task/" + g_id, {method: 'post', headers: JSON_HEADERS, body: json})
+                .then(response => response.status)
+                .then(status => {
+                    if (status === 200) {
+                        renderGroups() // update tasks count
+                        renderGroupDetails(g_id)
+                    } else {
+                        alert(status)
+                    }
                 })
-            document.getElementById("curr_g_id").value = g_id
-            renderGroupTasks(g_id)
+        }
+
+        function updateTask() {
+            let g_id = document.getElementById("curr_g_id").value
+            let t_id = document.getElementById("curr_t_id").value
+            let json = formToJson("form_task_details", function (object) {
+                // alert(object)
+                if (!isNaN(object["t_priority"])) {
+                    object["t_priority"] = parseInt(object["t_priority"])
+                }
+            });
+            fetch("/task/" + t_id, {method: 'put', headers: JSON_HEADERS, body: json})
+                .then(response => response.status)
+                .then(status => {
+                    if (status === 200) {
+                        renderGroupTasks(g_id)
+                        renderTask(t_id)
+                    } else {
+                        alert(status)
+                    }
+                });
+        }
+
+        function taskDelete() {
+            let g_id = document.getElementById("curr_g_id").value
+            let t_id = document.getElementById("curr_t_id").value
+            fetch("/task/" + t_id, {method:"delete"})
+                .then(response => response.status)
+                .then(status => {
+                    if (status === 200) {
+                        hideTaskDetails()
+                        renderGroupDetails(g_id)
+                    } else {
+                        alert(status)
+                    }
+                })
+        }
+
+        function hideTaskDetails() {
+            let form = document.getElementById("form_task_details")
+            form.style.visibility = "hidden"
+        }
+
+        function showTaskDetails() {
+            let form = document.getElementById("form_task_details")
+            form.style.visibility = "visible"
+        }
+
+        function hideGroupDetails() {
+            let group_details = document.getElementById("group_details")
+            group_details.style.visibility = "hidden"
+        }
+
+        function hideGroupDetails2() {
+            let group_details = document.getElementById("group_details")
+            group_details.style.visibility = "hidden"
+            hideTaskDetails()
+        }
+
+        function showGroupDetails() {
+            let group_details = document.getElementById("group_details")
+            group_details.style.visibility = "visible"
+        }
+
+        function formToJson(formId, preprocess_cb = null) {
+            // https://stackoverflow.com/questions/29775797/fetch-post-json-data
+            let form = document.forms.namedItem(formId);
+            let formData = new FormData(form);
+            let object = {};
+            formData.forEach((value, key) => object[key] = value);
+            if (preprocess_cb) {
+                preprocess_cb(object)
+            }
+            return JSON.stringify(object)
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -291,7 +291,7 @@
                                 <tr>
                                     <td>
                                         <label>
-                                            <input id="g_name2" class="group-header" type="text" name="g_name2"
+                                            <input id="g_name2" class="group-header" type="text" name="g_name"
                                                    value=""/>
                                         </label>
                                     </td>
@@ -302,7 +302,8 @@
                                         <a href="javascript:deleteGroup();"><input type="button" value="x"/></a>
                                     </td>
                                     <td width="1">
-                                        <a href="javascript:hideGroupDetails2();"><input type="button" value="&lt;"/></a>
+                                        <a href="javascript:hideGroupDetails2();"><input type="button"
+                                                                                         value="&lt;"/></a>
                                     </td>
                                 </tr>
                             </table>
