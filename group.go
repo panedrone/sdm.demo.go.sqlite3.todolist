@@ -4,7 +4,7 @@ package main
 // http://sqldalmaker.sourceforge.net
 
 type Group struct {
-	GId        int64  `json:"g_id"`
+	GId        int64  `json:"g_id"` // PK
 	GName      string `json:"g_name"`
 	TasksCount int64  `json:"tasks_count"`
 }

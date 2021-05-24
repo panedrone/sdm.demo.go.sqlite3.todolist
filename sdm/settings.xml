@@ -2,67 +2,20 @@
 <settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="settings.xsd">
 
-    <!-- target: base folder of generated files (relative to the project root); -->
-    <!-- sql: base folder of SQL files (relative to the project root); -->
-
     <folders target="" sql="sdm/sql"/>
-
-    <!-- scope (only Java, Go, PHP): the name of package (Java, Go) or name-space
-        (PHP) for DTO; -->
-    <!-- inheritance: (only Java) fully-qualified name of base class; example 
-    for GWT: 1) inheritance="implements com.google.gwt.user.client.rpc.IsSerializable" 
-    2) target class: public class Word implements com.google.gwt.user.client.rpc.IsSerializable... -->
-    <!-- field-names-mode: (only Java) 0 - as column names; 1 - lowerCamelCase; 
-    2 - lower_case; -->
 
     <dto scope="main" inheritance="" field-names-mode="0" single-file=""/>
 
-    <!-- scope (only Java, Go, PHP): the name of package (Java, Go) or name-space
-         (PHP) for DAO; -->
-
     <dao scope="main"/>
-
-    <!-- path: location of external VM file (relative to the project root); -->
 
     <external-vm-file path=""/>
 
     <ide event-log="true"/>
 
-    <!-- class-prefix: prefix of generated C++ classes -->
-
     <cpp class-prefix=""/>
-
-    <!-- jar: location of JDBC driver JAR file (relative to the project root); -->
-    <!-- class: JDBC driver class name; -->
-    <!-- url: JDBC connection URL (use $PROJECT_DIR$ or ${project_loc} if you need to specify project path); -->
-    <!-- user: user name; -->
-    <!-- pwd: password; -->
 
     <jdbc jar="sdm/sqlite-jdbc-3.30.1.jar" class="org.sqlite.JDBC"
           url="jdbc:sqlite:$PROJECT_DIR$/todo-list.sqlite" user="" pwd=""/>
-
-    <!-- tag 'type-map' aims to specify how the types detected by
-         code generator (JDBC) are rendered in target code. -->
-
-    <!-- if detected JDBC type is missing in 'type-map', then 'default' is used. -->
-
-    <!-- if 'default' is empty, detected type is rendered as-is. -->
-
-    <!-- this is why type-map for Java+JDBC is empty: -->
-
-    <!--    <type-map default="">-->
-    <!--    </type-map>-->
-
-    <!-- The types detected by JDBC and the types of Android run-time may differ: -->
-
-    <!--    <type-map default="">-->
-    <!--        <type detected="java.lang.Integer" target="java.lang.Long"/>-->
-    <!--    </type-map>-->
-
-    <!-- if the type is defined in XML meta-program explicitly,
-         it will be rendered as-is anyway (without considering type-map) -->
-
-    <!-- Example for Go and SQLite3: -->
 
     <type-map default="">
         <type detected="java.lang.Integer" target="int64"/>
@@ -72,14 +25,5 @@
         <type detected="byte[]" target="byte[]"/>
         <type detected="java.lang.Object" target="interface{}"/>
     </type-map>
-
-    <!-- Example for C++ and SQLite3: -->
-
-    <!--    <type-map default="CValue">-->
-    <!--        <type detected="java.lang.Long" target="CLong"/>-->
-    <!--        <type detected="java.lang.Double" target="CDouble"/>-->
-    <!--        <type detected="java.lang.String" target="CText"/>-->
-    <!--        <type detected="byte[]" target="CBlob"/>-->
-    <!--    </type-map>-->
 
 </settings>

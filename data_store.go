@@ -252,20 +252,20 @@ func (ds *DataStore) _mssqlInsert(sqlStr string, args ...interface{}) interface{
 	return nil
 }
 
-func (ds *DataStore) _execInsertBuiltin(sqlStr string, args ...interface{}) *int64 {
+func (ds *DataStore) _execInsertBuiltin(sqlStr string, args ...interface{}) int64 {
 	res, err := ds._exec(sqlStr, args...)
 	if err != nil {
 		panic(err)
 	}
 	id, err := res.LastInsertId()
 	if err == nil {
-		return &id
+		return id
 	}
 	// The Go builtin functions print and println print to stderr
 	// https://stackoverflow.com/questions/29721449/how-can-i-print-to-stderr-in-go-without-using-log
 	println(err.Error())
 	println("res.LastInsertId() FAILED: " + sqlStr)
-	return nil
+	return -1
 }
 
 func (ds *DataStore) Insert(sqlStr string, aiNames string, args ...interface{}) interface{} {
