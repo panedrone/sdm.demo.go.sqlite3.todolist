@@ -11,8 +11,8 @@ table.bg td {
     vertical-align: top;
 }
 
-.middle {
-    alignment: center;
+.center {
+    text-align: center;
 }
 
 .form-label {
