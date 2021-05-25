@@ -13,7 +13,7 @@ import (
 func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body) // === panedrone: store source for error handling
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid request: %s", err.Error()))
+		respondWithUriError(w, r, err)
 		return
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
@@ -46,15 +46,19 @@ func returnAllGroupsHandler(w http.ResponseWriter, _ *http.Request) {
 
 func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	gid := vars["g_id"]
+	gid, ok := vars["g_id"]
+	if !ok {
+		respondWithBadURI(w, r)
+		return
+	}
 	gId, err := strconv.ParseInt(gid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: g_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	bodyBytes, err := ioutil.ReadAll(r.Body) // === panedrone: store source for error handling
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid request: %s", err.Error()))
+		respondWithUriError(w, r, err)
 		return
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
@@ -78,10 +82,14 @@ func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	gid := vars["g_id"]
+	gid, ok := vars["g_id"]
+	if !ok {
+		respondWithBadURI(w, r)
+		return
+	}
 	gId, err := strconv.ParseInt(gid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: g_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	dao := GroupsDao{ds: &ds}
@@ -90,10 +98,14 @@ func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 func returnGroupHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	gid := vars["g_id"]
+	gid, ok := vars["g_id"]
+	if !ok {
+		respondWithBadURI(w, r)
+		return
+	}
 	gId, err := strconv.ParseInt(gid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: g_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	dao := GroupsDao{ds: &ds}

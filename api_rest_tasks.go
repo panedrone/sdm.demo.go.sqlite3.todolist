@@ -33,13 +33,9 @@ func returnTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 	// https://stackoverflow.com/questions/45378566/gorilla-mux-optional-query-values/45378656
+	// https://stackoverflow.com/questions/46045756/retrieve-optional-query-variables-with-gorilla-mux
 	urlParams := r.URL.Query()
-	p, ok := urlParams["g_id"]
-	if !ok || len(p) != 1 {
-		respondWithBadURI(w, r)
-		return
-	}
-	gid := p[0]
+	gid := urlParams.Get("g_id")
 	gId, err := strconv.ParseInt(gid, 10, 64)
 	if err != nil {
 		respondWithUriError(w, r, err)
@@ -55,13 +51,9 @@ func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 
 func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// https://stackoverflow.com/questions/45378566/gorilla-mux-optional-query-values/45378656
+	// https://stackoverflow.com/questions/46045756/retrieve-optional-query-variables-with-gorilla-mux
 	urlParams := r.URL.Query()
-	p, ok := urlParams["g_id"]
-	if !ok || len(p) != 1 {
-		respondWithBadURI(w, r)
-		return
-	}
-	gid := p[0]
+	gid := urlParams.Get("g_id")
 	gId, err := strconv.ParseInt(gid, 10, 64)
 	if err != nil {
 		respondWithUriError(w, r, err)
