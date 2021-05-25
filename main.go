@@ -32,17 +32,18 @@ func main() {
 	handleAssets(myRouter)
 	//fs := http.FileServer(http.Dir("assets"))
 	//myRouter.Handle("/assets/", http.StripPrefix("/assets/", fs))
-	myRouter.HandleFunc("/groups", returnAllGroupsHandler).Methods("GET")
-	myRouter.HandleFunc("/group", groupCreateHandler).Methods("POST")
-	myRouter.HandleFunc("/group/{g_id}", returnGroupHandler).Methods("GET")
-	myRouter.HandleFunc("/group/{g_id}", groupUpdateHandler).Methods("PUT")
-	myRouter.HandleFunc("/group/{g_id}", groupDeleteHandler).Methods("DELETE")
 	////////////////////
-	myRouter.HandleFunc("/tasks/{g_id}", returnGroupTasksHandler).Methods("GET")
-	myRouter.HandleFunc("/task/{g_id}", taskCreateHandler).Methods("POST")
-	myRouter.HandleFunc("/task/{t_id}", returnTaskHandler).Methods("GET")
-	myRouter.HandleFunc("/task/{t_id}", taskUpdateHandler).Methods("PUT")
-	myRouter.HandleFunc("/task/{t_id}", taskDeleteHandler).Methods("DELETE")
+	myRouter.HandleFunc("/groups", returnAllGroupsHandler).Methods("GET")
+	myRouter.HandleFunc("/groups", groupCreateHandler).Methods("POST")
+	myRouter.HandleFunc("/groups/{g_id}", returnGroupHandler).Methods("GET")
+	myRouter.HandleFunc("/groups/{g_id}", groupUpdateHandler).Methods("PUT")
+	myRouter.HandleFunc("/groups/{g_id}", groupDeleteHandler).Methods("DELETE")
+	////////////////////
+	myRouter.HandleFunc("/tasks", returnGroupTasksHandler).Methods("GET")
+	myRouter.HandleFunc("/tasks", taskCreateHandler).Methods("POST")
+	myRouter.HandleFunc("/tasks/{t_id}", returnTaskHandler).Methods("GET")
+	myRouter.HandleFunc("/tasks/{t_id}", taskUpdateHandler).Methods("PUT")
+	myRouter.HandleFunc("/tasks/{t_id}", taskDeleteHandler).Methods("DELETE")
 	// log.Fatal
 	// https://blog.scottlogic.com/2017/02/28/building-a-web-app-with-go.html
 	log.Fatal(http.ListenAndServe(":8080", myRouter))

@@ -2,8 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
+
+func respondWithUriError(w http.ResponseWriter, r *http.Request, err error) {
+	respondWithBabRequestError(w, fmt.Sprintf("Invalid request: %s -> %s", r.RequestURI, err.Error()))
+}
+
+func respondWithBadURI(w http.ResponseWriter, r *http.Request) {
+	respondWithBabRequestError(w, fmt.Sprintf("Invalid request: %s", r.RequestURI))
+}
 
 func respondWithBabRequestError(w http.ResponseWriter, message string) {
 	respondWithError(w, http.StatusBadRequest, message)

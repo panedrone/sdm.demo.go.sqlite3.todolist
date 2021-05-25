@@ -13,10 +13,14 @@ import (
 
 func returnTaskHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	tid := vars["t_id"]
+	tid, ok := vars["t_id"]
+	if !ok {
+		respondWithBadURI(w, r)
+		return
+	}
 	tId, err := strconv.ParseInt(tid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: t_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	tDao := TasksDao{ds: &ds}
@@ -28,11 +32,17 @@ func returnTaskHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	gid := vars["g_id"]
+	// https://stackoverflow.com/questions/45378566/gorilla-mux-optional-query-values/45378656
+	urlParams := r.URL.Query()
+	p, ok := urlParams["g_id"]
+	if !ok || len(p) != 1 {
+		respondWithBadURI(w, r)
+		return
+	}
+	gid := p[0]
 	gId, err := strconv.ParseInt(gid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: g_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	tDao := TasksDao{ds: &ds}
@@ -44,16 +54,22 @@ func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	gid := vars["g_id"]
+	// https://stackoverflow.com/questions/45378566/gorilla-mux-optional-query-values/45378656
+	urlParams := r.URL.Query()
+	p, ok := urlParams["g_id"]
+	if !ok || len(p) != 1 {
+		respondWithBadURI(w, r)
+		return
+	}
+	gid := p[0]
 	gId, err := strconv.ParseInt(gid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: g_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	bodyBytes, err := ioutil.ReadAll(r.Body) // === panedrone: store source for error handling
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid request: %s", err.Error()))
+		respondWithUriError(w, r, err)
 		return
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
@@ -82,10 +98,14 @@ func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	tid := vars["t_id"]
+	tid, ok := vars["t_id"]
+	if !ok {
+		respondWithBadURI(w, r)
+		return
+	}
 	tId, err := strconv.ParseInt(tid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: t_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	tDao := TasksDao{ds: &ds}
@@ -94,10 +114,14 @@ func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 
 func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	tid := vars["t_id"]
+	tid, ok := vars["t_id"]
+	if !ok {
+		respondWithBadURI(w, r)
+		return
+	}
 	tId, err := strconv.ParseInt(tid, 10, 64)
 	if err != nil {
-		respondWithBabRequestError(w, "Expected: t_id")
+		respondWithUriError(w, r, err)
 		return
 	}
 	bodyBytes, err := ioutil.ReadAll(r.Body) // === panedrone: store source for error handling
@@ -114,9 +138,9 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	date := inTask.TDate
-	_, err2 := time.Parse("2006-01-02", date)
-	if err2 != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
+	_, err = time.Parse("2006-01-02", date)
+	if err != nil {
+		respondWithBabRequestError(w, fmt.Sprintf("Invalid input: %s -> %s", bodyBytes, err.Error()))
 		return
 	}
 	subject := inTask.TSubject

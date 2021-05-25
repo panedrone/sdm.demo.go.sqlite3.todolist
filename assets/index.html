@@ -11,12 +11,12 @@
 
         function renderGroups() {
             let groupsTable = document.getElementById("groups_table")
-            while (groupsTable.rows.length > 1) {
-                groupsTable.deleteRow(1)
-            }
             fetch("/groups")
                 .then(response => response.json())
                 .then(groupList => {
+                    while (groupsTable.rows.length > 1) {
+                        groupsTable.deleteRow(1)
+                    }
                     groupList.forEach(group => {
                         let row = document.createElement("tr")
                         let td1 = document.createElement("td")
@@ -34,7 +34,7 @@
         }
 
         function renderGroupDetails(g_id) {
-            fetch("/group/" + g_id)
+            fetch("/groups/" + g_id)
                 .then(response => response.json())
                 .then(group => {
                     let g_name = document.getElementById("g_name2")
@@ -48,7 +48,7 @@
 
         function createGroup() {
             let json = formToJson("form_create_group");
-            fetch("/group", {method: 'post', headers: JSON_HEADERS, body: json})
+            fetch("/groups", {method: 'post', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
@@ -63,7 +63,7 @@
             let g_id = document.getElementById("curr_g_id").value
             let json = formToJson("form_update_group");
             // alert(json)
-            fetch("/group/" + g_id, {method: 'put', headers: JSON_HEADERS, body: json})
+            fetch("/groups/" + g_id, {method: 'put', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
@@ -76,7 +76,7 @@
 
         function deleteGroup() {
             let g_id = document.getElementById("curr_g_id").value
-            fetch("/group/" + g_id, {method: 'delete'})
+            fetch("/groups/" + g_id, {method: 'delete'})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
@@ -89,9 +89,9 @@
                 })
         }
 
-        function renderTask(t_id) {
+        function renderTaskDetails(t_id) {
             document.getElementById("curr_t_id").value = t_id
-            fetch("/task/" + t_id)
+            fetch("/tasks/" + t_id)
                 .then(response => response.json())
                 .then(task => {
                     let subj = document.getElementById("subj")
@@ -110,19 +110,19 @@
 
         function renderGroupTasks(g_id) {
             let tasksTable = document.getElementById("tasks_table")
-            while (tasksTable.rows.length > 1) {
-                tasksTable.deleteRow(1)
-            }
-            fetch("/tasks/" + g_id)
+            fetch("/tasks?g_id=" + g_id)
                 .then(response => response.json())
                 .then(taskList => {
+                    while (tasksTable.rows.length > 1) {
+                        tasksTable.deleteRow(1)
+                    }
                     taskList.forEach(task => {
                         let row = document.createElement("tr")
                         let td1 = document.createElement("td")
                         td1.innerHTML = task.t_date
                         let td2 = document.createElement("td")
                         let a = document.createElement("a")
-                        a.href = 'javascript:renderTask(' + task.t_id + ');'
+                        a.href = 'javascript:renderTaskDetails(' + task.t_id + ');'
                         a.innerHTML = task.t_subject
                         td2.appendChild(a)
                         let td3 = document.createElement("td")
@@ -138,7 +138,7 @@
         function taskCreate() {
             let g_id = document.getElementById("curr_g_id").value
             let json = formToJson("form_create_task");
-            fetch("/task/" + g_id, {method: 'post', headers: JSON_HEADERS, body: json})
+            fetch("/tasks?g_id=" + g_id, {method: 'post', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
@@ -159,12 +159,12 @@
                     object["t_priority"] = parseInt(object["t_priority"])
                 }
             });
-            fetch("/task/" + t_id, {method: 'put', headers: JSON_HEADERS, body: json})
+            fetch("/tasks/" + t_id, {method: 'put', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
                         renderGroupTasks(g_id)
-                        renderTask(t_id)
+                        renderTaskDetails(t_id)
                     } else {
                         alert(status)
                     }
@@ -174,7 +174,7 @@
         function taskDelete() {
             let g_id = document.getElementById("curr_g_id").value
             let t_id = document.getElementById("curr_t_id").value
-            fetch("/task/" + t_id, {method:"delete"})
+            fetch("/tasks/" + t_id, {method:"delete"})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
