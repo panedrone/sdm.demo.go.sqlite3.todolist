@@ -21,12 +21,12 @@ func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	var inGroup Group
 	err = decoder.Decode(&inGroup)
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
 		return
 	}
 	name := inGroup.GName
 	if len(name) == 0 {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
 	dao := GroupsDao{ds: &ds}
@@ -66,12 +66,12 @@ func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var inGroup Group
 	err = decoder.Decode(&inGroup)
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
 		return
 	}
 	name := inGroup.GName
 	if len(name) == 0 {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
 	dao := GroupsDao{ds: &ds}

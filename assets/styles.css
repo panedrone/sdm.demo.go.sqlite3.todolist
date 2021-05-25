@@ -11,6 +11,10 @@ table.bg td {
     vertical-align: top;
 }
 
+.middle {
+    alignment: center;
+}
+
 .form-label {
     padding: 7px;
     width: 1%;

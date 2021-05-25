@@ -39,8 +39,8 @@ func main() {
 	myRouter.HandleFunc("/groups/{g_id}", groupUpdateHandler).Methods("PUT")
 	myRouter.HandleFunc("/groups/{g_id}", groupDeleteHandler).Methods("DELETE")
 	////////////////////
-	myRouter.HandleFunc("/tasks", returnGroupTasksHandler).Methods("GET")
-	myRouter.HandleFunc("/tasks", taskCreateHandler).Methods("POST")
+	myRouter.HandleFunc("/tasks", returnGroupTasksHandler).Queries("g_id", "{g_id}").Methods("GET")
+	myRouter.HandleFunc("/tasks", taskCreateHandler).Queries("g_id", "{g_id}").Methods("POST")
 	myRouter.HandleFunc("/tasks/{t_id}", returnTaskHandler).Methods("GET")
 	myRouter.HandleFunc("/tasks/{t_id}", taskUpdateHandler).Methods("PUT")
 	myRouter.HandleFunc("/tasks/{t_id}", taskDeleteHandler).Methods("DELETE")

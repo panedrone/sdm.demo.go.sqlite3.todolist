@@ -69,12 +69,12 @@ func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
 	var inTask Task
 	err = decoder.Decode(&inTask)
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
 		return
 	}
 	subject := inTask.TSubject
 	if len(subject) == 0 {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
 	tDao := TasksDao{ds: &ds}
@@ -118,7 +118,7 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	bodyBytes, err := ioutil.ReadAll(r.Body) // === panedrone: store source for error handling
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid request: %s", err.Error()))
+		respondWithBadRequestError(w, fmt.Sprintf("Invalid request: %s", err.Error()))
 		return
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
@@ -126,18 +126,18 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var inTask Task
 	err = decoder.Decode(&inTask)
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
 		return
 	}
 	date := inTask.TDate
 	_, err = time.Parse("2006-01-02", date)
 	if err != nil {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid input: %s -> %s", bodyBytes, err.Error()))
+		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s -> %s", bodyBytes, err.Error()))
 		return
 	}
 	subject := inTask.TSubject
 	if len(subject) == 0 {
-		respondWithBabRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
+		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
 	priority := inTask.TPriority
