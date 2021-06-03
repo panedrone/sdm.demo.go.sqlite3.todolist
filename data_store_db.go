@@ -14,7 +14,7 @@ import (
 
 func initDb(ds *DataStore) {
 	var err error
-	ds.handle, err = sql.Open("sqlite3", "./todo-list.sqlite")
+	ds.db, err = sql.Open("sqlite3", "./todo-list.sqlite")
 	if err != nil {
 		panic(err)
 	}

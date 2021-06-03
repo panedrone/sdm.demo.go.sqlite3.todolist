@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="/assets/styles.css" type="text/css"/>
     <title>TODO</title>
     <script>
         const JSON_HEADERS = {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-        }
+        };
 
         function renderGroups() {
-            let groupsTable = document.getElementById("groups_table")
+            let groupsTable = document.getElementById("groups_table");
             fetch("/groups")
                 .then(response => response.json())
                 .then(groupList => {
                     while (groupsTable.rows.length > 1) {
-                        groupsTable.deleteRow(1)
+                        groupsTable.deleteRow(1);
                     }
                     groupList.forEach(group => {
-                        let row = document.createElement("tr")
-                        let td1 = document.createElement("td")
-                        let a = document.createElement("a")
-                        a.href = 'javascript:renderGroupDetails(' + group.g_id + ');'
-                        a.innerHTML = group.g_name
-                        td1.appendChild(a)
-                        let td2 = document.createElement("td")
-                        td2.className = "center"
-                        td2.innerHTML = group.tasks_count
-                        row.appendChild(td1)
-                        row.appendChild(td2)
-                        groupsTable.appendChild(row)
-                    })
-                })
+                        let row = document.createElement("tr");
+                        let td1 = document.createElement("td");
+                        let a = document.createElement("a");
+                        a.href = 'javascript:renderGroupDetails(' + group.g_id + ');';
+                        a.innerHTML = group.g_name;
+                        td1.appendChild(a);
+                        let td2 = document.createElement("td");
+                        td2.className = "center";
+                        td2.innerHTML = group.tasks_count;
+                        row.appendChild(td1);
+                        row.appendChild(td2);
+                        groupsTable.appendChild(row);
+                    });
+                });
         }
 
         function renderGroupDetails(g_id) {
             fetch("/groups/" + g_id)
                 .then(response => response.json())
                 .then(group => {
-                    let g_name = document.getElementById("g_name2")
-                    g_name.value = group.g_name
-                    showGroupDetails()
-                    hideTaskDetails()
-                })
-            document.getElementById("curr_g_id").value = g_id
-            renderGroupTasks(g_id)
+                    let g_name = document.getElementById("g_name2");
+                    g_name.value = group.g_name;
+                    showGroupDetails();
+                    hideTaskDetails();
+                });
+            document.getElementById("curr_g_id").value = g_id;
+            renderGroupTasks(g_id);
         }
 
         function createGroup() {
@@ -53,165 +54,165 @@
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
-                        renderGroups()
+                        renderGroups();
                     } else {
-                        alert(status)
+                        alert(status);
                     }
                 });
         }
 
         function updateGroup() {
-            let g_id = document.getElementById("curr_g_id").value
+            let g_id = document.getElementById("curr_g_id").value;
             let json = formToJson("form_update_group");
             // alert(json)
             fetch("/groups/" + g_id, {method: 'put', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
-                        renderGroups()
+                        renderGroups();
                     } else {
-                        alert(status)
+                        alert(status);
                     }
-                })
+                });
         }
 
         function deleteGroup() {
-            let g_id = document.getElementById("curr_g_id").value
+            let g_id = document.getElementById("curr_g_id").value;
             fetch("/groups/" + g_id, {method: 'delete'})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
-                        hideTaskDetails()
-                        hideGroupDetails()
-                        renderGroups()
+                        hideTaskDetails();
+                        hideGroupDetails();
+                        renderGroups();
                     } else {
-                        alert(status)
+                        alert(status);
                     }
-                })
+                });
         }
 
         function renderTaskDetails(t_id) {
-            document.getElementById("curr_t_id").value = t_id
+            document.getElementById("curr_t_id").value = t_id;
             fetch("/tasks/" + t_id)
                 .then(response => response.json())
                 .then(task => {
-                    let subj = document.getElementById("subj")
-                    subj.innerText = task.t_subject
-                    let t_date = document.getElementById("t_date")
-                    t_date.value = task.t_date
-                    let t_subject = document.getElementById("t_subject")
-                    t_subject.value = task.t_subject
-                    let t_priority = document.getElementById("t_priority")
-                    t_priority.value = task.t_priority
-                    let t_comments = document.getElementById("t_comments")
-                    t_comments.value = task.t_comments
-                    showTaskDetails()
-                })
+                    let subj = document.getElementById("subj");
+                    subj.innerText = task.t_subject;
+                    let t_date = document.getElementById("t_date");
+                    t_date.value = task.t_date;
+                    let t_subject = document.getElementById("t_subject");
+                    t_subject.value = task.t_subject;
+                    let t_priority = document.getElementById("t_priority");
+                    t_priority.value = task.t_priority;
+                    let t_comments = document.getElementById("t_comments");
+                    t_comments.value = task.t_comments;
+                    showTaskDetails();
+                });
         }
 
         function renderGroupTasks(g_id) {
-            let tasksTable = document.getElementById("tasks_table")
+            let tasksTable = document.getElementById("tasks_table");
             fetch("/tasks?g_id=" + g_id)
                 .then(response => response.json())
                 .then(taskList => {
                     while (tasksTable.rows.length > 1) {
-                        tasksTable.deleteRow(1)
+                        tasksTable.deleteRow(1);
                     }
                     taskList.forEach(task => {
-                        let row = document.createElement("tr")
-                        let td1 = document.createElement("td")
-                        td1.innerHTML = task.t_date
-                        let td2 = document.createElement("td")
-                        let a = document.createElement("a")
-                        a.href = 'javascript:renderTaskDetails(' + task.t_id + ');'
-                        a.innerHTML = task.t_subject
-                        td2.appendChild(a)
-                        let td3 = document.createElement("td")
-                        td3.className = "center"
-                        td3.innerHTML = task.t_priority
-                        row.appendChild(td1)
-                        row.appendChild(td2)
-                        row.appendChild(td3)
-                        tasksTable.appendChild(row)
-                    })
-                })
+                        let row = document.createElement("tr");
+                        let td1 = document.createElement("td");
+                        td1.innerHTML = task.t_date;
+                        let td2 = document.createElement("td");
+                        let a = document.createElement("a");
+                        a.href = 'javascript:renderTaskDetails(' + task.t_id + ');';
+                        a.innerHTML = task.t_subject;
+                        td2.appendChild(a);
+                        let td3 = document.createElement("td");
+                        td3.className = "center";
+                        td3.innerHTML = task.t_priority;
+                        row.appendChild(td1);
+                        row.appendChild(td2);
+                        row.appendChild(td3);
+                        tasksTable.appendChild(row);
+                    });
+                });
         }
 
         function taskCreate() {
-            let g_id = document.getElementById("curr_g_id").value
+            let g_id = document.getElementById("curr_g_id").value;
             let json = formToJson("form_create_task");
             fetch("/tasks?g_id=" + g_id, {method: 'post', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
-                        renderGroups() // update tasks count
-                        renderGroupDetails(g_id)
+                        renderGroups(); // update tasks count
+                        renderGroupDetails(g_id);
                     } else {
-                        alert(status)
+                        alert(status);
                     }
-                })
+                });
         }
 
         function updateTask() {
-            let g_id = document.getElementById("curr_g_id").value
-            let t_id = document.getElementById("curr_t_id").value
+            let g_id = document.getElementById("curr_g_id").value;
+            let t_id = document.getElementById("curr_t_id").value;
             let json = formToJson("form_task_details", function (object) {
                 // alert(object)
                 if (!isNaN(object["t_priority"])) {
-                    object["t_priority"] = parseInt(object["t_priority"])
+                    object["t_priority"] = parseInt(object["t_priority"]);
                 }
             });
             fetch("/tasks/" + t_id, {method: 'put', headers: JSON_HEADERS, body: json})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
-                        renderGroupTasks(g_id)
-                        renderTaskDetails(t_id)
+                        renderGroupTasks(g_id);
+                        renderTaskDetails(t_id);
                     } else {
-                        alert(status)
+                        alert(status);
                     }
                 });
         }
 
         function taskDelete() {
-            let g_id = document.getElementById("curr_g_id").value
-            let t_id = document.getElementById("curr_t_id").value
-            fetch("/tasks/" + t_id, {method:"delete"})
+            let g_id = document.getElementById("curr_g_id").value;
+            let t_id = document.getElementById("curr_t_id").value;
+            fetch("/tasks/" + t_id, {method: "delete"})
                 .then(response => response.status)
                 .then(status => {
                     if (status === 200) {
-                        hideTaskDetails()
-                        renderGroupDetails(g_id)
+                        hideTaskDetails();
+                        renderGroupDetails(g_id);
                     } else {
-                        alert(status)
+                        alert(status);
                     }
-                })
+                });
         }
 
         function hideTaskDetails() {
-            let form = document.getElementById("form_task_details")
-            form.style.visibility = "hidden"
+            let form = document.getElementById("form_task_details");
+            form.style.visibility = "hidden";
         }
 
         function showTaskDetails() {
-            let form = document.getElementById("form_task_details")
-            form.style.visibility = "visible"
+            let form = document.getElementById("form_task_details");
+            form.style.visibility = "visible";
         }
 
         function hideGroupDetails() {
-            let group_details = document.getElementById("group_details")
-            group_details.style.visibility = "hidden"
+            let group_details = document.getElementById("group_details");
+            group_details.style.visibility = "hidden";
         }
 
         function hideGroupDetails2() {
-            let group_details = document.getElementById("group_details")
-            group_details.style.visibility = "hidden"
-            hideTaskDetails()
+            let group_details = document.getElementById("group_details");
+            group_details.style.visibility = "hidden";
+            hideTaskDetails();
         }
 
         function showGroupDetails() {
-            let group_details = document.getElementById("group_details")
-            group_details.style.visibility = "visible"
+            let group_details = document.getElementById("group_details");
+            group_details.style.visibility = "visible";
         }
 
         function formToJson(formId, preprocess_cb = null) {
@@ -221,13 +222,13 @@
             let object = {};
             formData.forEach((value, key) => object[key] = value);
             if (preprocess_cb) {
-                preprocess_cb(object)
+                preprocess_cb(object);
             }
-            return JSON.stringify(object)
+            return JSON.stringify(object);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            renderGroups()
+            renderGroups();
         });
     </script>
 </head>
@@ -344,27 +345,8 @@
         </td>
         <td>
             <form id="form_task_details" style="visibility: hidden">
+                <div class="title" id="subj"></div>
                 <table>
-                    <tr>
-                        <td colspan="2">
-                            <table class="controls">
-                                <tr>
-                                    <td width="100%">
-                                        <div class="title" id="subj"></div>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:updateTask()"><input type="button" value="!"/> </a>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:taskDelete()"><input type="button" value="x"/> </a>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:hideTaskDetails();"><input type="button" value="&lt;"/> </a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
                     <tr>
                         <td class="form-label">Date</td>
                         <td><input type="text" name="t_date" id="t_date" value=""/></td>
@@ -383,8 +365,23 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <textarea name="t_comments" id="t_comments" cols="40"
-                                      rows="10"></textarea>
+                                    <textarea name="t_comments" id="t_comments" cols="40"
+                                              rows="10"></textarea>
+                        </td>
+                    </tr>
+                </table>
+                <table class="controls">
+                    <tr>
+                        <td>
+                        </td>
+                        <td width="1">
+                            <a href="javascript:updateTask()"><input type="button" value="!"/> </a>
+                        </td>
+                        <td width="1">
+                            <a href="javascript:taskDelete()"><input type="button" value="x"/> </a>
+                        </td>
+                        <td width="1">
+                            <a href="javascript:hideTaskDetails();"><input type="button" value="&lt;"/> </a>
                         </td>
                     </tr>
                 </table>
