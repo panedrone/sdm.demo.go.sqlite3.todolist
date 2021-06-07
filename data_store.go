@@ -137,20 +137,17 @@ func (ds *DataStore) Begin() {
 func (ds *DataStore) Commit() {
 	if ds.tx == nil {
 		panic("Tx not started")
-		// return
 	}
 	err := ds.tx.Commit()
 	if err != nil {
 		panic(err)
 	}
-	// to prevent ds.tx.Rollback() in defer
-	ds.tx = nil
+	ds.tx = nil // to prevent ds.tx.Rollback() in defer
 }
 
 func (ds *DataStore) Rollback() {
 	if ds.tx == nil {
-		// commit() was called, just do nothing:
-		return
+		return // commit() was called, just do nothing:
 	}
 	err := ds.tx.Rollback()
 	if err != nil {
@@ -174,7 +171,7 @@ func (ds *DataStore) _exec(sqlStr string, args ...interface{}) (sql.Result, erro
 }
 
 func (ds *DataStore) PGFetch(cursor string) string {
-	return fmt.Sprintf("fetch all from \"%s\"", cursor)
+	return fmt.Sprintf(`fetch all from "%s"`, cursor)
 }
 
 func (ds *DataStore) _pgInsert(sqlStr string, aiNames string, args ...interface{}) interface{} {
@@ -266,8 +263,7 @@ func (ds *DataStore) _defaultInsert(sqlStr string, args ...interface{}) interfac
 }
 
 func (ds *DataStore) Insert(sqlStr string, aiNames string, args ...interface{}) interface{} {
-	// len(nil) == 0
-	if len(aiNames) == 0 {
+	if len(aiNames) == 0 { // len(nil) == 0
 		panic("DataStore.insert is not applicable for aiNames = " + aiNames)
 	}
 	// Builtin LastInsertId works only with MySQL and SQLite3
@@ -391,14 +387,13 @@ func (ds *DataStore) _queryAllImplicitRcOracle(sqlStr string, onRowArr []func(ma
 		colNames, data, values, valuePointers := ds._prepareFetch(rows)
 		for rows.Next() {
 			err := rows.Scan(valuePointers...)
-			if err == nil {
-				for i, colName := range colNames {
-					data[colName] = values[i]
-				}
-				onRowArr[onRowIndex](data)
-			} else {
+			if err != nil {
 				panic(err)
 			}
+			for i, colName := range colNames {
+				data[colName] = values[i]
+			}
+			onRowArr[onRowIndex](data)
 		}
 		onRowIndex++
 	}
@@ -478,14 +473,13 @@ func _fetchAllFromCursor(rows driver.Rows, onRow func(map[string]interface{})) {
 	values := make([]driver.Value, len(colNames))
 	for {
 		err := rows.Next(values)
-		if err == nil {
-			for i, colName := range colNames {
-				data[colName] = values[i]
-			}
-			onRow(data)
-		} else {
+		if err != nil {
 			break
 		}
+		for i, colName := range colNames {
+			data[colName] = values[i]
+		}
+		onRow(data)
 	}
 }
 
@@ -519,21 +513,19 @@ func (ds *DataStore) _queryRowValues(sqlStr string, queryArgs ...interface{}) []
 	}()
 	outParamIndex := 0
 	_, _, values, valuePointers := ds._prepareFetch(rows)
-	if rows.Next() {
-		err = rows.Scan(valuePointers...)
-		if err == nil {
-			for _, arg := range queryArgs {
-				if _isPtr(arg) {
-					ds.Assign(arg, values[outParamIndex])
-				}
-			}
-		} else {
-			panic(err)
-		}
-		outParamIndex++
-	} else {
+	if !rows.Next() {
 		panic(fmt.Sprintf("Rows found 0 for %s", sqlStr))
 	}
+	err = rows.Scan(valuePointers...)
+	if err != nil {
+		panic(err)
+	}
+	for _, arg := range queryArgs {
+		if _isPtr(arg) {
+			ds.Assign(arg, values[outParamIndex])
+		}
+	}
+	outParamIndex++
 	if rows.Next() {
 		panic(fmt.Sprintf("More than 1 row found for %s", sqlStr))
 	}
@@ -570,12 +562,11 @@ func (ds *DataStore) QueryAll(sqlStr string, onRow func(interface{}), args ...in
 		_, _, values, valuePointers := ds._prepareFetch(rows)
 		for rows.Next() {
 			err = rows.Scan(valuePointers...)
-			if err == nil {
-				// return whole row to enable multiple out params in mssql sp
-				onRow(values)
-			} else {
+			if err != nil {
 				panic(err)
 			}
+			// return whole row to enable multiple out params in mssql sp
+			onRow(values)
 		}
 		if !rows.NextResultSet() {
 			break
@@ -596,17 +587,15 @@ func (ds *DataStore) QueryRow(sqlStr string, args ...interface{}) map[string]int
 		}
 	}()
 	colNames, data, values, valuePointers := ds._prepareFetch(rows)
-	if rows.Next() {
-		err = rows.Scan(valuePointers...)
-		if err == nil {
-			for i, colName := range colNames {
-				data[colName] = values[i]
-			}
-		} else {
-			panic(err)
-		}
-	} else {
+	if !rows.Next() {
 		panic(fmt.Sprintf("Rows found 0 for %s", sqlStr))
+	}
+	err = rows.Scan(valuePointers...)
+	if err != nil {
+		panic(err)
+	}
+	for i, colName := range colNames {
+		data[colName] = values[i]
 	}
 	if rows.Next() {
 		panic(fmt.Sprintf("More than 1 row found for %s", sqlStr))
@@ -633,14 +622,13 @@ func (ds *DataStore) QueryAllRows(sqlStr string, onRow func(map[string]interface
 		colNames, data, values, valuePointers := ds._prepareFetch(rows)
 		for rows.Next() {
 			err := rows.Scan(valuePointers...)
-			if err == nil {
-				for i, colName := range colNames {
-					data[colName] = values[i]
-				}
-				onRow(data)
-			} else {
+			if err != nil {
 				panic(err)
 			}
+			for i, colName := range colNames {
+				data[colName] = values[i]
+			}
+			onRow(data)
 		}
 		if !rows.NextResultSet() {
 			break

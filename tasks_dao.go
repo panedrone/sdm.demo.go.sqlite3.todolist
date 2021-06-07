@@ -72,10 +72,10 @@ func (dao *TasksDao) DeleteGroupTasks(gId string) int64 {
 	return dao.ds.Exec(sql, gId)
 }
 
-func (dao *TasksDao) GetCount() interface{} {
+func (dao *TasksDao) GetCount() int64 {
 	sql := `select count(*) from tasks`
 	r := dao.ds.Query(sql)
-	var res interface{}
+	var res int64
 	dao.ds.Assign(&res, r)
 	return res
 }

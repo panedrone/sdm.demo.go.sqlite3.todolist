@@ -13,6 +13,6 @@
 
     <exec-dml method="deleteGroupTasks(gId)" ref="delete_group_tasks.sql"/>
 
-    <query method="getCount()" ref="select count(*) from tasks" />
+    <query method="getCount()" ref="select count(*) from tasks" return-type="int64"/>
 
 </dao-class>
