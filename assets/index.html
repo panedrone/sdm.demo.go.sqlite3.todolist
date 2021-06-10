@@ -182,6 +182,7 @@
                 .then(status => {
                     if (status === 200) {
                         hideTaskDetails();
+                        renderGroups(); // update tasks count
                         renderGroupDetails(g_id);
                     } else {
                         alert(status);

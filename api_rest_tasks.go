@@ -24,10 +24,14 @@ func returnTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tDao := TasksDao{ds: &ds}
-	currTask := tDao.ReadTask(tId)
+	currTask, err := tDao.ReadTask(tId)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 	err = json.NewEncoder(w).Encode(currTask)
 	if err != nil {
-		panic(err)
+		respondWith500(w, err.Error())
 	}
 }
 
@@ -42,10 +46,14 @@ func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tDao := TasksDao{ds: &ds}
-	tasks := tDao.GetGroupTasks(gId)
+	tasks, err := tDao.GetGroupTasks(gId)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 	err = json.NewEncoder(w).Encode(tasks)
 	if err != nil {
-		panic(err)
+		respondWith500(w, err.Error())
 	}
 }
 
@@ -85,7 +93,11 @@ func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
 	currentTime := time.Now().Local()
 	layoutISO := currentTime.Format("2006-01-02")
 	t.TDate = layoutISO
-	tDao.CreateTask(&t)
+	err = tDao.CreateTask(&t)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 }
 
 func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +113,11 @@ func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tDao := TasksDao{ds: &ds}
-	tDao.DeleteTask(tId)
+	_, err = tDao.DeleteTask(tId)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 }
 
 func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -143,10 +159,18 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	priority := inTask.TPriority
 	comments := inTask.TComments
 	tDao := TasksDao{ds: &ds}
-	t := tDao.ReadTask(tId)
+	t, err := tDao.ReadTask(tId)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 	t.TSubject = subject
 	t.TPriority = priority
 	t.TDate = date
 	t.TComments = comments
-	tDao.UpdateTask(&t)
+	_, err = tDao.UpdateTask(&t)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 }

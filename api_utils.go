@@ -18,6 +18,10 @@ func respondWithBadRequestError(w http.ResponseWriter, message string) {
 	respondWithError(w, http.StatusBadRequest, message)
 }
 
+func respondWith500(w http.ResponseWriter, message string) {
+	respondWithError(w, http.StatusInternalServerError, message)
+}
+
 func respondWithError(w http.ResponseWriter, httpStatusCode int, message string) {
 	msg := map[string]interface{}{
 		"error": message,

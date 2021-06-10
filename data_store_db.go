@@ -2,14 +2,10 @@ package main
 
 import (
 	"database/sql"
-
-	_ "github.com/mattn/go-sqlite3" // SQLite3
+	_ "github.com/mattn/go-sqlite3"
 )
 
-func initDb(ds *DataStore) {
-	var err error
+func initDb(ds *DataStore) (err error) {
 	ds.db, err = sql.Open("sqlite3", "./todo-list.sqlite")
-	if err != nil {
-		panic(err)
-	}
+	return
 }

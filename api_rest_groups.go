@@ -32,15 +32,23 @@ func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	dao := GroupsDao{ds: &ds}
 	gr := Group{}
 	gr.GName = name
-	dao.CreateGroup(&gr)
+	err = dao.CreateGroup(&gr)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 }
 
 func returnAllGroupsHandler(w http.ResponseWriter, _ *http.Request) {
 	dao := GroupsDao{ds: &ds}
-	groups := dao.GetGroups()
-	err := json.NewEncoder(w).Encode(groups)
+	groups, err := dao.GetGroups()
 	if err != nil {
-		panic(err)
+		respondWith500(w, err.Error())
+		return
+	}
+	err = json.NewEncoder(w).Encode(groups)
+	if err != nil {
+		respondWith500(w, err.Error())
 	}
 }
 
@@ -75,9 +83,17 @@ func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dao := GroupsDao{ds: &ds}
-	gr := dao.ReadGroup(gId)
+	gr, err := dao.ReadGroup(gId)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 	gr.GName = name
-	dao.UpdateGroup(&gr)
+	_, err = dao.UpdateGroup(&gr)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 }
 
 func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +109,10 @@ func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dao := GroupsDao{ds: &ds}
-	dao.DeleteGroup(gId)
+	_, err = dao.DeleteGroup(gId)
+	if err != nil {
+		respondWith500(w, err.Error())
+	}
 }
 
 func returnGroupHandler(w http.ResponseWriter, r *http.Request) {
@@ -109,9 +128,13 @@ func returnGroupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dao := GroupsDao{ds: &ds}
-	currGroup := dao.ReadGroup(gId)
+	currGroup, err := dao.ReadGroup(gId)
+	if err != nil {
+		respondWith500(w, err.Error())
+		return
+	}
 	err = json.NewEncoder(w).Encode(currGroup)
 	if err != nil {
-		panic(err)
+		respondWith500(w, err.Error())
 	}
 }
