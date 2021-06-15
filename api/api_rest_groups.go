@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"bytes"
@@ -7,10 +7,11 @@ import (
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
+	"sdm_demo_go_todolist/dal"
 	"strconv"
 )
 
-func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
+func GroupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body) // === panedrone: store source for error handling
 	if err != nil {
 		respondWithUriError(w, r, err)
@@ -18,7 +19,7 @@ func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
 	decoder := json.NewDecoder(rd)
-	var inGroup Group
+	var inGroup dal.Group
 	err = decoder.Decode(&inGroup)
 	if err != nil {
 		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
@@ -29,8 +30,8 @@ func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
-	dao := GroupsDao{ds: &ds}
-	gr := Group{}
+	dao := dal.CreateGroupsDao()
+	gr := dal.Group{}
 	gr.GName = name
 	err = dao.CreateGroup(&gr)
 	if err != nil {
@@ -39,8 +40,8 @@ func groupCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func returnAllGroupsHandler(w http.ResponseWriter, _ *http.Request) {
-	dao := GroupsDao{ds: &ds}
+func ReturnAllGroupsHandler(w http.ResponseWriter, _ *http.Request) {
+	dao := dal.CreateGroupsDao()
 	groups, err := dao.GetGroups()
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -52,7 +53,7 @@ func returnAllGroupsHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func GroupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gid, ok := vars["g_id"]
 	if !ok {
@@ -71,7 +72,7 @@ func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
 	decoder := json.NewDecoder(rd)
-	var inGroup Group
+	var inGroup dal.Group
 	err = decoder.Decode(&inGroup)
 	if err != nil {
 		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
@@ -82,7 +83,7 @@ func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
-	dao := GroupsDao{ds: &ds}
+	dao := dal.CreateGroupsDao()
 	gr, err := dao.ReadGroup(gId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -96,7 +97,7 @@ func groupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func GroupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gid, ok := vars["g_id"]
 	if !ok {
@@ -108,14 +109,14 @@ func groupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	dao := GroupsDao{ds: &ds}
+	dao := dal.CreateGroupsDao()
 	_, err = dao.DeleteGroup(gId)
 	if err != nil {
 		respondWith500(w, err.Error())
 	}
 }
 
-func returnGroupHandler(w http.ResponseWriter, r *http.Request) {
+func ReturnGroupHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gid, ok := vars["g_id"]
 	if !ok {
@@ -127,7 +128,7 @@ func returnGroupHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	dao := GroupsDao{ds: &ds}
+	dao := dal.CreateGroupsDao()
 	currGroup, err := dao.ReadGroup(gId)
 	if err != nil {
 		respondWith500(w, err.Error())

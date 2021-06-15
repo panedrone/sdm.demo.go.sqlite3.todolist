@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"bytes"
@@ -7,11 +7,12 @@ import (
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
+	"sdm_demo_go_todolist/dal"
 	"strconv"
 	"time"
 )
 
-func returnTaskHandler(w http.ResponseWriter, r *http.Request) {
+func ReturnTaskHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tid, ok := vars["t_id"]
 	if !ok {
@@ -23,7 +24,7 @@ func returnTaskHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	tDao := TasksDao{ds: &ds}
+	tDao := dal.CreateTasksDao()
 	currTask, err := tDao.ReadTask(tId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -35,7 +36,7 @@ func returnTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
+func ReturnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 	// https://stackoverflow.com/questions/45378566/gorilla-mux-optional-query-values/45378656
 	// https://stackoverflow.com/questions/46045756/retrieve-optional-query-variables-with-gorilla-mux
 	urlParams := r.URL.Query()
@@ -45,7 +46,7 @@ func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	tDao := TasksDao{ds: &ds}
+	tDao := dal.CreateTasksDao()
 	tasks, err := tDao.GetGroupTasks(gId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -57,7 +58,7 @@ func returnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
+func TaskCreateHandler(w http.ResponseWriter, r *http.Request) {
 	// https://stackoverflow.com/questions/45378566/gorilla-mux-optional-query-values/45378656
 	// https://stackoverflow.com/questions/46045756/retrieve-optional-query-variables-with-gorilla-mux
 	urlParams := r.URL.Query()
@@ -74,7 +75,7 @@ func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
 	decoder := json.NewDecoder(rd)
-	var inTask Task
+	var inTask dal.Task
 	err = decoder.Decode(&inTask)
 	if err != nil {
 		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
@@ -85,8 +86,8 @@ func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
-	tDao := TasksDao{ds: &ds}
-	t := Task{}
+	tDao := dal.CreateTasksDao()
+	t := dal.Task{}
 	t.GId = gId
 	t.TSubject = subject
 	t.TPriority = 1
@@ -100,7 +101,7 @@ func taskCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func TaskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tid, ok := vars["t_id"]
 	if !ok {
@@ -112,7 +113,7 @@ func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	tDao := TasksDao{ds: &ds}
+	tDao := dal.CreateTasksDao()
 	_, err = tDao.DeleteTask(tId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -120,7 +121,7 @@ func taskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func TaskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tid, ok := vars["t_id"]
 	if !ok {
@@ -139,7 +140,7 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	rd := bytes.NewReader(bodyBytes) // === panedrone: r.Body became unavailable
 	decoder := json.NewDecoder(rd)
-	var inTask Task
+	var inTask dal.Task
 	err = decoder.Decode(&inTask)
 	if err != nil {
 		respondWithBadRequestError(w, fmt.Sprintf("JSON decoder FAIL: %s. Input: %s", err.Error(), bodyBytes))
@@ -158,7 +159,7 @@ func taskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	priority := inTask.TPriority
 	comments := inTask.TComments
-	tDao := TasksDao{ds: &ds}
+	tDao := dal.CreateTasksDao()
 	t, err := tDao.ReadTask(tId)
 	if err != nil {
 		respondWith500(w, err.Error())

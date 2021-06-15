@@ -2,11 +2,11 @@
 <settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="settings.xsd">
 
-    <folders target="" sql="sdm/sql"/>
+    <folders target="dal" sql="sdm/sql"/>
 
-    <dto scope="main" inheritance="" field-names-mode="0" single-file=""/>
+    <dto scope="dal" inheritance="" field-names-mode="0" single-file=""/>
 
-    <dao scope="main"/>
+    <dao scope="dal"/>
 
     <external-vm-file path=""/>
 

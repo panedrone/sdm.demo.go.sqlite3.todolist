@@ -4,6 +4,8 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"sdm_demo_go_todolist/api"
+	"sdm_demo_go_todolist/dal"
 )
 
 func handleAssets(r *mux.Router) {
@@ -21,11 +23,14 @@ func handleAssets(r *mux.Router) {
 	r.PathPrefix("/assets/").Handler(staticFileHandler).Methods("GET")
 }
 
-var ds DataStore
-
 func main() {
-	ds.Open()
-	defer ds.Close()
+	err := dal.OpenDB()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	defer func() {
+		err = dal.CloseDB()
+	}()
 
 	myRouter := mux.NewRouter()
 	myRouter.StrictSlash(true)
@@ -33,17 +38,17 @@ func main() {
 	//fs := http.FileServer(http.Dir("assets"))
 	//myRouter.Handle("/assets/", http.StripPrefix("/assets/", fs))
 	////////////////////
-	myRouter.HandleFunc("/groups", returnAllGroupsHandler).Methods("GET")
-	myRouter.HandleFunc("/groups", groupCreateHandler).Methods("POST")
-	myRouter.HandleFunc("/groups/{g_id}", returnGroupHandler).Methods("GET")
-	myRouter.HandleFunc("/groups/{g_id}", groupUpdateHandler).Methods("PUT")
-	myRouter.HandleFunc("/groups/{g_id}", groupDeleteHandler).Methods("DELETE")
+	myRouter.HandleFunc("/groups", api.ReturnAllGroupsHandler).Methods("GET")
+	myRouter.HandleFunc("/groups", api.GroupCreateHandler).Methods("POST")
+	myRouter.HandleFunc("/groups/{g_id}", api.ReturnGroupHandler).Methods("GET")
+	myRouter.HandleFunc("/groups/{g_id}", api.GroupUpdateHandler).Methods("PUT")
+	myRouter.HandleFunc("/groups/{g_id}", api.GroupDeleteHandler).Methods("DELETE")
 	////////////////////
-	myRouter.HandleFunc("/tasks", returnGroupTasksHandler).Queries("g_id", "{g_id}").Methods("GET")
-	myRouter.HandleFunc("/tasks", taskCreateHandler).Queries("g_id", "{g_id}").Methods("POST")
-	myRouter.HandleFunc("/tasks/{t_id}", returnTaskHandler).Methods("GET")
-	myRouter.HandleFunc("/tasks/{t_id}", taskUpdateHandler).Methods("PUT")
-	myRouter.HandleFunc("/tasks/{t_id}", taskDeleteHandler).Methods("DELETE")
+	myRouter.HandleFunc("/tasks", api.ReturnGroupTasksHandler).Queries("g_id", "{g_id}").Methods("GET")
+	myRouter.HandleFunc("/tasks", api.TaskCreateHandler).Queries("g_id", "{g_id}").Methods("POST")
+	myRouter.HandleFunc("/tasks/{t_id}", api.ReturnTaskHandler).Methods("GET")
+	myRouter.HandleFunc("/tasks/{t_id}", api.TaskUpdateHandler).Methods("PUT")
+	myRouter.HandleFunc("/tasks/{t_id}", api.TaskDeleteHandler).Methods("DELETE")
 	// log.Fatal
 	// https://blog.scottlogic.com/2017/02/28/building-a-web-app-with-go.html
 	log.Fatal(http.ListenAndServe(":8080", myRouter))
