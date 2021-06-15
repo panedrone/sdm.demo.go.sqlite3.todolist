@@ -20,10 +20,10 @@ func CloseDB() error {
 	return ds.Close()
 }
 
-func CreateTasksDao() *TasksDao {
+func NewTasksDao() *TasksDao {
 	return &TasksDao{Ds: ds}
 }
 
-func CreateGroupsDao() *GroupsDao {
+func NewGroupsDao() *GroupsDao {
 	return &GroupsDao{Ds: ds}
 }

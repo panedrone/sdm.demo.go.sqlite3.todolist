@@ -30,7 +30,7 @@ func GroupCreateHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
-	dao := dal.CreateGroupsDao()
+	dao := dal.NewGroupsDao()
 	gr := dal.Group{}
 	gr.GName = name
 	err = dao.CreateGroup(&gr)
@@ -41,7 +41,7 @@ func GroupCreateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ReturnAllGroupsHandler(w http.ResponseWriter, _ *http.Request) {
-	dao := dal.CreateGroupsDao()
+	dao := dal.NewGroupsDao()
 	groups, err := dao.GetGroups()
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -83,7 +83,7 @@ func GroupUpdateHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
-	dao := dal.CreateGroupsDao()
+	dao := dal.NewGroupsDao()
 	gr, err := dao.ReadGroup(gId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -109,7 +109,7 @@ func GroupDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	dao := dal.CreateGroupsDao()
+	dao := dal.NewGroupsDao()
 	_, err = dao.DeleteGroup(gId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -128,7 +128,7 @@ func ReturnGroupHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	dao := dal.CreateGroupsDao()
+	dao := dal.NewGroupsDao()
 	currGroup, err := dao.ReadGroup(gId)
 	if err != nil {
 		respondWith500(w, err.Error())

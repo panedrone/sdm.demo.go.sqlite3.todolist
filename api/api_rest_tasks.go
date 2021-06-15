@@ -24,7 +24,7 @@ func ReturnTaskHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	tDao := dal.CreateTasksDao()
+	tDao := dal.NewTasksDao()
 	currTask, err := tDao.ReadTask(tId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -46,7 +46,7 @@ func ReturnGroupTasksHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	tDao := dal.CreateTasksDao()
+	tDao := dal.NewTasksDao()
 	tasks, err := tDao.GetGroupTasks(gId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -86,7 +86,7 @@ func TaskCreateHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithBadRequestError(w, fmt.Sprintf("Invalid input: %s", bodyBytes))
 		return
 	}
-	tDao := dal.CreateTasksDao()
+	tDao := dal.NewTasksDao()
 	t := dal.Task{}
 	t.GId = gId
 	t.TSubject = subject
@@ -113,7 +113,7 @@ func TaskDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		respondWithUriError(w, r, err)
 		return
 	}
-	tDao := dal.CreateTasksDao()
+	tDao := dal.NewTasksDao()
 	_, err = tDao.DeleteTask(tId)
 	if err != nil {
 		respondWith500(w, err.Error())
@@ -159,7 +159,7 @@ func TaskUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	priority := inTask.TPriority
 	comments := inTask.TComments
-	tDao := dal.CreateTasksDao()
+	tDao := dal.NewTasksDao()
 	t, err := tDao.ReadTask(tId)
 	if err != nil {
 		respondWith500(w, err.Error())
